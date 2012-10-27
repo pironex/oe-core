@@ -4,7 +4,7 @@ SECTION = "devel"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://config.guess;endline=39;md5=a3669d051b3a8408d69751e53b2e1cc1"
 
-DEPENDS_virtclass-native = "perl-native-runtime"
+DEPENDS_class-native = "perl-native-runtime"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
