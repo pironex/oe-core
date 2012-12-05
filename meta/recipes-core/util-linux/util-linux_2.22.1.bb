@@ -1,5 +1,5 @@
 MAJOR_VERSION = "2.22"
-PR = "r1"
+PR = "r2"
 require util-linux.inc
 
 SRC_URI += "file://util-linux-ng-replace-siginterrupt.patch \
