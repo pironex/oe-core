@@ -45,6 +45,11 @@ SRC_URI = "\
      file://0144-timer.cc-include-unistd.h.patch \
      file://0166-2012-04-27-Doug-Kwan-dougkwan-google.com.patch \
      file://0182-PR-ld-13991.patch \
+     file://backport/0001-doc-binutils.texi-elfedit-Fix-use-of-itemx-in-table.patch \
+     file://backport/0001-ld.texinfo-Replace-with-when-it-is-part-of-the-text.patch \
+     file://backport/0001-PR-gas-15212.patch \
+     file://backport/0001-doc-c-mips.texi-MIPS-Opts-Fix-use-of-itemx.patch \
+     file://backport/0001-gas-doc-sync-with-binutils-git.patch  \
      "
 
 SRC_URI[md5sum] = "ee0f10756c84979622b992a4a61ea3f5"
