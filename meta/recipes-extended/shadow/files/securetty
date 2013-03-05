@@ -139,6 +139,12 @@ ttymxc3
 ttymxc4
 ttymxc5
 
+# Intel PCH hubs
+ttyPCH0
+ttyPCH1
+ttyPCH2
+ttyPCH3
+
 # Standard serial ports, with devfs
 tts/0
 tts/1
