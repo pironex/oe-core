@@ -51,7 +51,7 @@ distutils3_do_install() {
         echo "Step 3 of ${PN} Install ..."
         # support filenames with *spaces*
         find ${D} -name "*.py" -print0 | while read -d $'\0' i ; do \
-            sed -i -e s:${D}::g $i
+            sed -i -e s:${D}::g "$i"
         done
 
         echo "Step 4 of ${PN} Install ..."
