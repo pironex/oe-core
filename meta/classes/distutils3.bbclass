@@ -1,10 +1,7 @@
-
-PYTHON_BASEVERSION = "3.3"
-
-inherit distutils3-base 
-#distutils-tools
+inherit distutils3-base
 
 DISTUTILS_BUILD_ARGS ?= ""
+DISTUTILS_BUILD_EXT_ARGS ?= ""
 DISTUTILS_STAGE_HEADERS_ARGS ?= "--install-dir=${STAGING_INCDIR}/${PYTHON_DIR}"
 DISTUTILS_STAGE_ALL_ARGS ?= "--prefix=${STAGING_DIR_HOST}${prefix} \
     --install-data=${STAGING_DATADIR}"
@@ -15,7 +12,12 @@ distutils3_do_compile() {
          STAGING_INCDIR=${STAGING_INCDIR} \
          STAGING_LIBDIR=${STAGING_LIBDIR} \
          BUILD_SYS=${BUILD_SYS} HOST_SYS=${HOST_SYS} \
-         ${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN} setup.py build ${DISTUTILS_BUILD_ARGS} || \
+         ${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN} setup.py \
+         build_ext --include-dirs ${STAGING_INCDIR}/${PYTHON_DIR}${PYTHON_ABI} \
+         --library-dirs ${STAGING_LIBCDIR}/${PYTHON_DIR} \
+         ${DISTUTILS_BUILD_EXT_ARGS} \
+         build ${DISTUTILS_BUILD_ARGS} || \
+         ${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN} setup.py build_ext ${DISTUTILS_BUILD_ARGS} || \
          bbfatal "${PYTHON_PN} setup.py build_ext execution failed."
 }
 
@@ -37,44 +39,33 @@ distutils3_stage_all() {
 }
 
 distutils3_do_install() {
-        echo "Beginning ${PN} Install ..."
         install -d ${D}${PYTHON_SITEPACKAGES_DIR}
-
-        echo "Step 2 of ${PN} Install ..."
         STAGING_INCDIR=${STAGING_INCDIR} \
         STAGING_LIBDIR=${STAGING_LIBDIR} \
         PYTHONPATH=${D}${PYTHON_SITEPACKAGES_DIR} \
         BUILD_SYS=${BUILD_SYS} HOST_SYS=${HOST_SYS} \
-        ${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN} setup.py install --install-lib=${D}${PYTHON_SITEPACKAGES_DIR} ${DISTUTILS_INSTALL_ARGS} || \
+        ${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN} setup.py install --install-lib=${D}/${PYTHON_SITEPACKAGES_DIR} ${DISTUTILS_INSTALL_ARGS} || \
         bbfatal "${PYTHON_PN} setup.py install execution failed."
 
-        echo "Step 3 of ${PN} Install ..."
         # support filenames with *spaces*
         find ${D} -name "*.py" -print0 | while read -d $'\0' i ; do \
             sed -i -e s:${D}::g "$i"
         done
 
-        echo "Step 4 of ${PN} Install ..."
         if test -e ${D}${bindir} ; then	
             for i in ${D}${bindir}/* ; do \
-                echo "Processing " $i; \
-                sed -i \
-                    -e s:${STAGING_BINDIR_NATIVE}/python3-native:${bindir}:g \
-                    $i
+                sed -i -e s:${STAGING_BINDIR_NATIVE}/${PYTHON_PN}-native/${PYTHON_PN}:${bindir}/env\ ${PYTHON_PN}:g $i
+                sed -i -e s:${STAGING_BINDIR_NATIVE}:${bindir}:g $i
             done
         fi
 
-        echo "Step 4 of ${PN} Install ..."
         if test -e ${D}${sbindir}; then
             for i in ${D}${sbindir}/* ; do \
-                echo "Processing " $i; \
-                sed -i \
-                    -e s:${STAGING_BINDIR_NATIVE}/python3-native:${bindir}:g \
-                    $i
+                sed -i -e s:${STAGING_BINDIR_NATIVE}/python-${PYTHON_PN}/${PYTHON_PN}:${bindir}/env\ ${PYTHON_PN}:g $i
+                sed -i -e s:${STAGING_BINDIR_NATIVE}:${bindir}:g $i
             done
         fi
 
-        echo "Step 5 of ${PN} Install ..."
         rm -f ${D}${PYTHON_SITEPACKAGES_DIR}/easy-install.pth
         
         #
@@ -82,6 +73,7 @@ distutils3_do_install() {
         #
         if test -e ${D}${datadir}/share; then
             mv -f ${D}${datadir}/share/* ${D}${datadir}/
+            rmdir ${D}${datadir}/share
         fi
 }
 
