@@ -339,6 +339,34 @@ setup_tmpdir() {
     fi
 }
 
+setup_deploydir() {
+    if [ -z "$DEPLOY_DIR_IMAGE" ]; then
+        # Try to get DEPLOY_DIR_IMAGE from bitbake
+        type -P bitbake &>/dev/null || {
+            echo "In order for this script to dynamically infer paths";
+            echo "to kernels or filesystem images, you either need";
+            echo "bitbake in your PATH or to source oe-init-build-env";
+            echo "before running this script" >&2;
+            exit 1; }
+
+        # We have bitbake in PATH, get DEPLOY_DIR_IMAGE from bitbake
+        OE_TMPDIR=`MACHINE=$MACHINE bitbake -e | sed -n 's/^DEPLOY_DIR_IMAGE=\"\(.*\)\"/\1/p'`
+        if [ -z "$DEPLOY_DIR_IMAGE" ]; then
+            # Check for errors from bitbake that the user needs to know about
+            BITBAKE_OUTPUT=`bitbake -e | wc -l`
+            if [ "$BITBAKE_OUTPUT" -eq "0" ]; then
+                echo "Error: this script needs to be run from your build directory,"
+                echo "or you need to explicitly set DEPLOY_DIR_IMAGE in your environment"
+            else
+                echo "There was an error running bitbake to determine DEPLOY_DIR_IMAGE"
+                echo "Here is the output from 'bitbake -e':"
+                bitbake -e
+            fi
+            exit 1
+        fi
+    fi
+}
+
 setup_sysroot() {
     # Toolchain installs set up $OECORE_NATIVE_SYSROOT in their
     # environment script. If that variable isn't set, we're
@@ -395,8 +423,9 @@ fi
 
 if [ -z "$KERNEL" -a "x$FSTYPE" != "xvmdk" ]; then
     setup_tmpdir
+    setup_deploydir
     eval kernel_file=\$${machine2}_DEFAULT_KERNEL
-    KERNEL=$OE_TMPDIR/deploy/images/$kernel_file
+    KERNEL=$DEPLOY_DIR_IMAGE/$kernel_file
 
     if [ -z "$KERNEL" ]; then
         error "Unable to determine default kernel for MACHINE [$MACHINE]"
@@ -418,13 +447,15 @@ fi
 # core-image-sato
 if [ "$LAZY_ROOTFS" = "true" ]; then
     setup_tmpdir
+    setup_deploydir
     echo "Assuming $ROOTFS really means $OE_TMPDIR/deploy/images/$ROOTFS-$MACHINE.$FSTYPE"
-    ROOTFS=$OE_TMPDIR/deploy/images/$ROOTFS-$MACHINE.$FSTYPE
+    ROOTFS=$DEPLOY_DIR_IMAGE/$ROOTFS-$MACHINE.$FSTYPE
 fi
 
 if [ -z "$ROOTFS" -a "x$FSTYPE" != "xvmdk" ]; then
     setup_tmpdir
-    T=$OE_TMPDIR/deploy/images
+    setup_deploydir
+    T=$DEPLOY_DIR_IMAGE
     eval rootfs_list=\$${machine2}_DEFAULT_ROOTFS
     findimage $T $MACHINE $FSTYPE
 
