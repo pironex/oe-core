@@ -13,12 +13,13 @@ SRC_URI[sha256sum] = "4dc132e276e013d4435886a79a90b348f063f1cd9077f158954d35d706
 
 inherit autotools pkgconfig
 
-DEPENDS = "libxkbcommon gdk-pixbuf pixman cairo glib-2.0 mtdev jpeg"
+DEPENDS = "libxkbcommon gdk-pixbuf pixman cairo glib-2.0 udev mtdev jpeg"
 DEPENDS += "wayland mesa virtual/egl"
 
 EXTRA_OECONF  = "--disable-android-compositor --enable-setuid-install"
 EXTRA_OECONF += "--disable-tablet-shell --disable-xwayland"
 EXTRA_OECONF += "--enable-simple-clients --enable-clients --disable-simple-egl-clients"
+EXTRA_OECONF += "--enable-fbdev-compositor"
 
 PACKAGECONFIG ??= "${@base_contains('DISTRO_FEATURES', 'wayland', 'kms wayland', '', d)} \
                    ${@base_contains('DISTRO_FEATURES', 'x11', 'x11', '', d)} \
