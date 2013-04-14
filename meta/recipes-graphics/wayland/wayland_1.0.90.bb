@@ -10,11 +10,9 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=1d4476a7d98dd5691c53d4d43a510c72 \
                     file://src/wayland-server.c;endline=21;md5=079ae21dbf98ada52ec23744851b0a5c"
 
-PR = "r1"
-
 SRC_URI = "http://wayland.freedesktop.org/releases/${BPN}-${PV}.tar.xz"
-SRC_URI[md5sum] = "936a2590aea69fa3c0cf234d54b9137c"
-SRC_URI[sha256sum] = "f52a012df699eff434b0f49e56000d6978b5f781048402ca8e0232242970fc49"
+SRC_URI[md5sum] = "aaf564cd951a3d6f7e01013ca1c34e8b"
+SRC_URI[sha256sum] = "0206863f45f950e383e5b51933cb61cdca9a0a318fb4dee3792817d60261b66b"
 
 SRC_URI_append_class-native = " file://just-scanner.patch"
 
