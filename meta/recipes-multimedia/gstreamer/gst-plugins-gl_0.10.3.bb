@@ -8,15 +8,13 @@ SRC_URI[sha256sum] = "48340b6a4b8abce16344a7bc33e74a94fdcce4f57ef6342cdf2f941c42
 
 SRC_URI += " file://0001-conditional-gl-framebuffer-undefined-use.patch"
 
-DEPENDS += "gst-plugins-base virtual/libgles2 virtual/egl jpeg"
+DEPENDS += "gst-plugins-base jpeg libpng"
 
 inherit gettext gconf
 
-# This package doesn't have a configure switch for EGL or GL, so forcibly tell
-# configure that it can't find gl.h so it always uses EGL.  If/when we have some
-# way for machines to specify their preferred GL flavour this can be
-# automatically adapted.
-EXTRA_OECONF += "ac_cv_header_GL_gl_h=no"
+PACKAGECONFIG ??= "${@base_contains('DISTRO_FEATURES', 'opengl', 'opengl', 'openglesv2', d)}"
+PACKAGECONFIG[opengl] = ",ac_cv_header_GL_gl_h=no,virtual/libgl glew"
+PACKAGECONFIG[openglesv2] = "ac_cv_header_GL_gl_h=no,,virtual/libgles2 virtual/egl"
 
 ALLOW_EMPTY_${PN} = "1"
 ALLOW_EMPTY_${PN}-apps = "1"
