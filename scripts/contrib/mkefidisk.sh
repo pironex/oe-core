@@ -168,7 +168,7 @@ echo "Enabling boot flag on $BOOTFS"
 parted $DEVICE set 1 boot on
 
 echo "Labeling $BOOTFS as EFI System Partition"
-parted $DEVICE name 1 "EFI System Partition"
+parted $DEVICE name 1 "EFI"
 
 echo "Creating ROOTFS partition on $ROOTFS"
 parted $DEVICE mkpart primary $ROOTFS_START $ROOTFS_END
