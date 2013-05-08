@@ -1,0 +1,39 @@
+From a218eb16200aadf3fa4c819f3567b74fa693186a Mon Sep 17 00:00:00 2001
+From: Koen Kooi <koen@dominion.thruhere.net>
+Date: Wed, 8 May 2013 15:24:13 +0200
+Subject: [PATCH] enable xdg-terminal
+
+Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+---
+ scripts/Makefile.in | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/Makefile.in b/scripts/Makefile.in
+index 2c7d2ac..eeb2ef8 100644
+--- a/scripts/Makefile.in
++++ b/scripts/Makefile.in
+@@ -20,11 +20,11 @@ SCRIPTS		= \
+     xdg-open \
+     xdg-email \
+     xdg-screensaver \
+-    xdg-settings
++    xdg-settings \
++    xdg-terminal
+ #    xdg-su
+ #    xdg-copy \
+ #    xdg-file-dialog
+-#    xdg-terminal
+ 
+ MANPAGES=	$(SCRIPTS:%=man/%.1)
+ WEBPAGES=	$(SCRIPTS:%=%.html)
+@@ -42,7 +42,6 @@ release:	scripts html man
+ 	rm -f xdg-*.in *~ HACKING generate-help-script.awk
+ 	rm -rf desc/
+ 	rm -rf xsl/
+-	rm -f xdg-file-dialog xdg-su xdg-copy xdg-terminal
+ 
+ distclean: clean
+ 	rm -f Makefile
+-- 
+1.8.1.4
+
