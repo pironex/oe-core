@@ -18,7 +18,11 @@ PR="r0"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=a5367a90934098d6b05af3b746405014"
 
-SRC_URI = "http://portland.freedesktop.org/download/${BPN}-${PV}.tgz"
+SRC_URI = "git://anongit.freedesktop.org/xdg/xdg-utils \
+           file://0001-enable-xdg-terminal.patch"
+SRCREV = "050333e34e2fe7430ad2ead37e5a0420ac0c2a3e"
+
+S = "${WORKDIR}/git"
 
 inherit autotools
 
