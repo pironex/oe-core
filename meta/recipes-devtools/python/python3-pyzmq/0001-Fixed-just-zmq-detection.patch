@@ -1,0 +1,56 @@
+From a249b31be7e3e66b81feacfc7537f11c0c1dabda Mon Sep 17 00:00:00 2001
+From: xantares <xantares@fujitsu-l64.(none)>
+Date: Sun, 24 Feb 2013 15:49:36 +0100
+Subject: [PATCH] Fixed just zmq detection
+
+---
+ buildutils/detect.py |    6 ++++++
+ setup.py             |    8 ++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/buildutils/detect.py b/buildutils/detect.py
+index f95cba3..6b6ccb9 100644
+--- a/buildutils/detect.py
++++ b/buildutils/detect.py
+@@ -110,6 +110,12 @@ def detect_zmq(basedir, compiler=None, **compiler_attrs):
+     cfile = pjoin(basedir, 'vers.c')
+     shutil.copy(pjoin(os.path.dirname(__file__), 'vers.c'), cfile)
+     
++    # check if we need to link against Realtime Extensions library
++    if sys.platform.startswith('linux'):
++        cc = ccompiler.new_compiler(compiler=compiler)
++        if not cc.has_function('timer_create'):
++            compiler_attrs['libraries'].append('rt')
++            
+     efile = test_compilation(cfile, compiler=compiler, **compiler_attrs)
+     
+     result = Popen(efile, stdout=PIPE, stderr=PIPE)
+diff --git a/setup.py b/setup.py
+index b646673..005757e 100755
+--- a/setup.py
++++ b/setup.py
+@@ -41,6 +41,7 @@ if sys.version_info < (2,6):
+ import distutils
+ from distutils.core import setup, Command
+ from distutils.ccompiler import get_default_compiler
++from distutils.ccompiler import new_compiler
+ from distutils.extension import Extension
+ from distutils.errors import CompileError, LinkError
+ from distutils.command.build import build
+@@ -408,8 +409,11 @@ class Configure(build_ext):
+             ext.libraries.extend(['rpcrt4', 'ws2_32', 'advapi32'])
+         elif not sys.platform.startswith(('darwin', 'freebsd')):
+             ext.include_dirs.append(bundledir)
+-
+-            ext.libraries.append('rt')
++            
++            # check if we need to link against Realtime Extensions library
++            cc = new_compiler(compiler=self.compiler_type)
++            if not cc.has_function('timer_create'):
++                ext.libraries.append('rt')
+         
+         # insert the extension:
+         self.distribution.ext_modules.insert(0, ext)
+-- 
+1.7.9.5
+
