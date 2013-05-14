@@ -1,0 +1,36 @@
+---
+ setup.py |   15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
+
+--- a/setup.py
++++ b/setup.py
+@@ -464,7 +464,8 @@ class PyBuildExt(build_ext):
+         # only change this for cross builds for 3.3, issues on Mageia
+         if cross_compiling:
+             self.add_gcc_paths()
+-        self.add_multiarch_paths()
++        if not cross_compiling:
++            self.add_multiarch_paths()
+ 
+         # Add paths specified in the environment variables LDFLAGS and
+         # CPPFLAGS for header and library files.
+@@ -500,7 +501,7 @@ class PyBuildExt(build_ext):
+                     for directory in reversed(options.dirs):
+                         add_dir_to_list(dir_list, directory)
+ 
+-        if os.path.normpath(sys.base_prefix) != '/usr' \
++        if not cross_compiling and os.path.normpath(sys.base_prefix) != '/usr' \
+                 and not sysconfig.get_config_var('PYTHONFRAMEWORK'):
+             # OSX note: Don't add LIBDIR and INCLUDEDIR to building a framework
+             # (PYTHONFRAMEWORK is set) to avoid # linking problems when
+@@ -520,6 +521,10 @@ class PyBuildExt(build_ext):
+                 '/lib', '/usr/lib',
+                 ]
+             inc_dirs = self.compiler.include_dirs + ['/usr/include']
++        if cross_compiling:
++            lib_dirs = self.compiler.library_dirs
++            inc_dirs = self.compiler.include_dirs
++
+         exts = []
+         missing = []
+ 
