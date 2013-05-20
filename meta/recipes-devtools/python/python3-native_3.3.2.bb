@@ -12,20 +12,19 @@ file://070-dont-clean-ipkg-install.patch \
 file://080-distutils-dont_adjust_files.patch \
 file://110-enable-zlib.patch \
 file://130-readline-setup.patch \
-file://140-verbose-sharedmods.patch \
 file://150-fix-setupterm.patch \
-file://h2py-pr13032.patch \
 file://python-3.3-multilib.patch \
 file://03-fix-tkinter-detection.patch \
 file://avoid_warning_about_tkinter.patch \
 file://06-ctypes-libffi-fix-configure.patch \
 file://shutil-follow-symlink-fix.patch \
+file://0001-h2py-Fix-issue-13032-where-it-fails-with-UnicodeDeco.patch \
 ${DISTRO_SRC_URI} \
 "
-SRC_URI[md5sum] = "b3b2524f72409d919a4137826a870a8f"
-SRC_URI[sha256sum] = "15c113fd6c058712f05d31b4eff149d4d823b8e39ef5e37228dc5dc4f8716df9"
+SRC_URI[md5sum] = "7dffe775f3bea68a44f762a3490e5e28"
+SRC_URI[sha256sum] = "f77202fe2bbc203205d7bd6e8452567fa1d9bc97f6957c9ef753d9a36cdcbe9a"
 
-LIC_FILES_CHKSUM = "file://LICENSE;md5=d214581529e343354f8e23025bdf582d"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=a7e738bb078a33a825ce4a0282f8cb31"
 
 S = "${WORKDIR}/Python-${PV}"
 
