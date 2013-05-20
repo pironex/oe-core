@@ -5,7 +5,7 @@ class ClassExtender(object):
         self.pkgs_mapping = []
 
     def extend_name(self, name):
-        if name.startswith("kernel-module"):
+        if name.startswith("kernel-") or name == "virtual/kernel":
             return name
         if name.startswith("rtld"):
             return name
@@ -40,7 +40,9 @@ class ClassExtender(object):
         var = var.split()
         newvar = []
         for v in var:
-            if v.startswith("^"):
+            if v.startswith("^" + self.extname):
+                newvar.append(v)
+            elif v.startswith("^"):
                 newvar.append("^" + self.extname + "-" + v[1:])
             else:
                 newvar.append(self.extend_name(v))
@@ -61,11 +63,12 @@ class ClassExtender(object):
         deps = self.d.getVar(varname, True)
         if not deps:
             return
-        deps = bb.utils.explode_deps(deps)
-        newdeps = []
+        deps = bb.utils.explode_dep_versions2(deps)
+        newdeps = {}
         for dep in deps:
-            newdeps.append(self.map_depends(dep))
-        self.d.setVar(varname, " ".join(newdeps))
+            newdeps[self.map_depends(dep)] = deps[dep]
+
+        self.d.setVar(varname, bb.utils.join_deps(newdeps, False))
 
     def map_packagevars(self):
         for pkg in (self.d.getVar("PACKAGES", True).split() + [""]):
