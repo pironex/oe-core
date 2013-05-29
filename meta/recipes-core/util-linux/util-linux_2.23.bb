@@ -15,4 +15,5 @@ SRC_URI[md5sum] = "7bd10387f1aa00efaa4b07dfa13215bc"
 SRC_URI[sha256sum] = "19ee024b4c6678eaa928d38edc011c332b088e0ff06239575f6b7e00a1855959"
 
 CACHED_CONFIGUREVARS += "scanf_cv_alloc_modifier=as"
-EXTRA_OECONF_append_virtclass-native += " --disable-fallocate --disable-use-tty-group"
+EXTRA_OECONF_class-native += "--disable-fallocate --disable-use-tty-group"
+EXTRA_OECONF_class-nativesdk += "--disable-fallocate --disable-use-tty-group"
