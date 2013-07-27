@@ -34,4 +34,6 @@ do_sanitize() {
     sed -E -i'.tweak' -e 's/__nonzero__/__bool__/g' jinja/datastructure.py
 }
 
+FILES_${PN}-doc += "${datadir}/docs"
+
 addtask sanitize after do_unpack before do_patch
