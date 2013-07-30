@@ -1,7 +1,7 @@
-Index: Python-3.3.0rc2/Include/pythonrun.h
+Index: Python-3.3.2/Include/pythonrun.h
 ===================================================================
---- Python-3.3.0rc2.orig/Include/pythonrun.h	2012-09-09 02:10:55.000000000 -0700
-+++ Python-3.3.0rc2/Include/pythonrun.h	2012-09-20 22:46:53.273124016 -0700
+--- Python-3.3.2.orig/Include/pythonrun.h	2013-05-15 09:32:54.000000000 -0700
++++ Python-3.3.2/Include/pythonrun.h	2013-07-27 16:19:54.099877246 -0700
 @@ -181,6 +181,8 @@
  /* In their own files */
  PyAPI_FUNC(const char *) Py_GetVersion(void);
@@ -11,10 +11,10 @@ Index: Python-3.3.0rc2/Include/pythonrun.h
  PyAPI_FUNC(const char *) Py_GetCopyright(void);
  PyAPI_FUNC(const char *) Py_GetCompiler(void);
  PyAPI_FUNC(const char *) Py_GetBuildInfo(void);
-Index: Python-3.3.0rc2/Lib/distutils/command/install.py
+Index: Python-3.3.2/Lib/distutils/command/install.py
 ===================================================================
---- Python-3.3.0rc2.orig/Lib/distutils/command/install.py	2012-09-09 02:10:56.000000000 -0700
-+++ Python-3.3.0rc2/Lib/distutils/command/install.py	2012-09-20 22:46:53.273124016 -0700
+--- Python-3.3.2.orig/Lib/distutils/command/install.py	2013-05-15 09:32:54.000000000 -0700
++++ Python-3.3.2/Lib/distutils/command/install.py	2013-07-27 16:19:54.099877246 -0700
 @@ -25,6 +25,8 @@
      from site import USER_SITE
      HAS_USER_SITE = True
@@ -33,29 +33,11 @@ Index: Python-3.3.0rc2/Lib/distutils/command/install.py
          'headers': '$base/include/python$py_version_short$abiflags/$dist_name',
          'scripts': '$base/bin',
          'data'   : '$base',
-Index: Python-3.3.0rc2/Lib/distutils/sysconfig.py
+Index: Python-3.3.2/Lib/pydoc.py
 ===================================================================
---- Python-3.3.0rc2.orig/Lib/distutils/sysconfig.py	2012-09-09 02:10:56.000000000 -0700
-+++ Python-3.3.0rc2/Lib/distutils/sysconfig.py	2012-09-20 22:46:53.273124016 -0700
-@@ -139,8 +139,11 @@
-             prefix = plat_specific and EXEC_PREFIX or PREFIX
- 
-     if os.name == "posix":
--        libpython = os.path.join(prefix,
--                                 "lib", "python" + get_python_version())
-+        if plat_specific or standard_lib:
-+            lib = sys.lib
-+        else:
-+            lib = "lib"
-+        libpython = os.path.join(prefix, lib, "python" + get_python_version())
-         if standard_lib:
-             return libpython
-         else:
-Index: Python-3.3.0rc2/Lib/pydoc.py
-===================================================================
---- Python-3.3.0rc2.orig/Lib/pydoc.py	2012-09-09 02:10:59.000000000 -0700
-+++ Python-3.3.0rc2/Lib/pydoc.py	2012-09-20 22:46:53.273124016 -0700
-@@ -369,7 +369,7 @@
+--- Python-3.3.2.orig/Lib/pydoc.py	2013-05-15 09:32:55.000000000 -0700
++++ Python-3.3.2/Lib/pydoc.py	2013-07-27 16:19:54.103877246 -0700
+@@ -372,7 +372,7 @@
  
          docloc = os.environ.get("PYTHONDOCS", self.PYTHONDOCS)
  
@@ -64,10 +46,10 @@ Index: Python-3.3.0rc2/Lib/pydoc.py
                                 "python%d.%d" %  sys.version_info[:2])
          if (isinstance(object, type(os)) and
              (object.__name__ in ('errno', 'exceptions', 'gc', 'imp',
-Index: Python-3.3.0rc2/Lib/site.py
+Index: Python-3.3.2/Lib/site.py
 ===================================================================
---- Python-3.3.0rc2.orig/Lib/site.py	2012-09-09 02:10:59.000000000 -0700
-+++ Python-3.3.0rc2/Lib/site.py	2012-09-20 22:46:53.273124016 -0700
+--- Python-3.3.2.orig/Lib/site.py	2013-05-15 09:32:55.000000000 -0700
++++ Python-3.3.2/Lib/site.py	2013-07-27 16:19:54.103877246 -0700
 @@ -303,13 +303,19 @@
          if sys.platform in ('os2emx', 'riscos'):
              sitepackages.append(os.path.join(prefix, "Lib", "site-packages"))
@@ -91,11 +73,11 @@ Index: Python-3.3.0rc2/Lib/site.py
          if sys.platform == "darwin":
              # for framework builds *only* we add the standard Apple
              # locations.
-Index: Python-3.3.0rc2/Lib/trace.py
+Index: Python-3.3.2/Lib/trace.py
 ===================================================================
---- Python-3.3.0rc2.orig/Lib/trace.py	2012-09-09 02:11:04.000000000 -0700
-+++ Python-3.3.0rc2/Lib/trace.py	2012-09-20 22:46:53.273124016 -0700
-@@ -750,10 +750,10 @@
+--- Python-3.3.2.orig/Lib/trace.py	2013-05-15 09:32:56.000000000 -0700
++++ Python-3.3.2/Lib/trace.py	2013-07-27 16:19:54.103877246 -0700
+@@ -751,10 +751,10 @@
                  # should I also call expanduser? (after all, could use $HOME)
  
                  s = s.replace("$prefix",
@@ -108,20 +90,20 @@ Index: Python-3.3.0rc2/Lib/trace.py
                                             "python" + sys.version[:3]))
                  s = os.path.normpath(s)
                  ignore_dirs.append(s)
-Index: Python-3.3.0rc2/Makefile.pre.in
+Index: Python-3.3.2/Makefile.pre.in
 ===================================================================
---- Python-3.3.0rc2.orig/Makefile.pre.in	2012-09-20 22:45:52.000000000 -0700
-+++ Python-3.3.0rc2/Makefile.pre.in	2012-09-20 22:46:53.277124015 -0700
-@@ -92,6 +92,8 @@
+--- Python-3.3.2.orig/Makefile.pre.in	2013-07-27 16:19:16.000000000 -0700
++++ Python-3.3.2/Makefile.pre.in	2013-07-27 16:19:54.103877246 -0700
+@@ -96,6 +96,8 @@
  
  # Machine-dependent subdirectories
  MACHDEP=	@MACHDEP@
 +LIB=		@LIB@
 +ARCH=		@ARCH@
  
- # Install prefix for architecture-independent files
- prefix=		@prefix@
-@@ -108,7 +110,7 @@
+ # Multiarch directory (may be empty)
+ MULTIARCH=	@MULTIARCH@
+@@ -115,7 +117,7 @@
  MANDIR=		@mandir@
  INCLUDEDIR=	@includedir@
  CONFINCLUDEDIR=	$(exec_prefix)/include
@@ -130,7 +112,7 @@ Index: Python-3.3.0rc2/Makefile.pre.in
  ABIFLAGS=	@ABIFLAGS@
  
  # Detailed destination directories
-@@ -618,6 +620,7 @@
+@@ -635,6 +637,7 @@
  		-DEXEC_PREFIX='"$(exec_prefix)"' \
  		-DVERSION='"$(VERSION)"' \
  		-DVPATH='"$(VPATH)"' \
@@ -138,7 +120,7 @@ Index: Python-3.3.0rc2/Makefile.pre.in
  		-o $@ $(srcdir)/Modules/getpath.c
  
  Modules/python.o: $(srcdir)/Modules/python.c
-@@ -669,7 +672,7 @@
+@@ -701,7 +704,7 @@
  Python/compile.o Python/symtable.o Python/ast.o: $(GRAMMAR_H) $(AST_H)
  
  Python/getplatform.o: $(srcdir)/Python/getplatform.c
@@ -147,10 +129,10 @@ Index: Python-3.3.0rc2/Makefile.pre.in
  
  Python/importdl.o: $(srcdir)/Python/importdl.c
  		$(CC) -c $(PY_CORE_CFLAGS) -I$(DLINCLDIR) -o $@ $(srcdir)/Python/importdl.c
-Index: Python-3.3.0rc2/Modules/getpath.c
+Index: Python-3.3.2/Modules/getpath.c
 ===================================================================
---- Python-3.3.0rc2.orig/Modules/getpath.c	2012-09-09 02:11:09.000000000 -0700
-+++ Python-3.3.0rc2/Modules/getpath.c	2012-09-20 22:46:53.277124015 -0700
+--- Python-3.3.2.orig/Modules/getpath.c	2013-05-15 09:32:59.000000000 -0700
++++ Python-3.3.2/Modules/getpath.c	2013-07-27 16:19:54.107877246 -0700
 @@ -121,9 +121,11 @@
  #define EXEC_PREFIX PREFIX
  #endif
@@ -174,10 +156,10 @@ Index: Python-3.3.0rc2/Modules/getpath.c
  
  static void
  reduce(wchar_t *dir)
-Index: Python-3.3.0rc2/Python/getplatform.c
+Index: Python-3.3.2/Python/getplatform.c
 ===================================================================
---- Python-3.3.0rc2.orig/Python/getplatform.c	2012-09-09 02:11:12.000000000 -0700
-+++ Python-3.3.0rc2/Python/getplatform.c	2012-09-20 22:46:53.277124015 -0700
+--- Python-3.3.2.orig/Python/getplatform.c	2013-05-15 09:33:00.000000000 -0700
++++ Python-3.3.2/Python/getplatform.c	2013-07-27 16:19:54.107877246 -0700
 @@ -10,3 +10,23 @@
  {
  	return PLATFORM;
@@ -202,10 +184,10 @@ Index: Python-3.3.0rc2/Python/getplatform.c
 +{
 +	return LIB;
 +}
-Index: Python-3.3.0rc2/Python/sysmodule.c
+Index: Python-3.3.2/Python/sysmodule.c
 ===================================================================
---- Python-3.3.0rc2.orig/Python/sysmodule.c	2012-09-09 02:11:12.000000000 -0700
-+++ Python-3.3.0rc2/Python/sysmodule.c	2012-09-20 22:46:53.277124015 -0700
+--- Python-3.3.2.orig/Python/sysmodule.c	2013-05-15 09:33:00.000000000 -0700
++++ Python-3.3.2/Python/sysmodule.c	2013-07-27 16:19:54.107877246 -0700
 @@ -1612,6 +1612,10 @@
                          PyUnicode_FromString(Py_GetCopyright()));
      SET_SYS_FROM_STRING("platform",
@@ -217,11 +199,11 @@ Index: Python-3.3.0rc2/Python/sysmodule.c
      SET_SYS_FROM_STRING("executable",
                          PyUnicode_FromWideChar(
                                 Py_GetProgramFullPath(), -1));
-Index: Python-3.3.0rc2/setup.py
+Index: Python-3.3.2/setup.py
 ===================================================================
---- Python-3.3.0rc2.orig/setup.py	2012-09-20 22:45:53.000000000 -0700
-+++ Python-3.3.0rc2/setup.py	2012-09-20 22:46:53.277124015 -0700
-@@ -462,7 +462,7 @@
+--- Python-3.3.2.orig/setup.py	2013-07-27 16:19:17.000000000 -0700
++++ Python-3.3.2/setup.py	2013-07-27 16:19:54.107877246 -0700
+@@ -439,7 +439,7 @@
          # directories (i.e. '.' and 'Include') must be first.  See issue
          # 10520.
          if not cross_compiling:
@@ -230,7 +212,7 @@ Index: Python-3.3.0rc2/setup.py
              add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
          # only change this for cross builds for 3.3, issues on Mageia
          if cross_compiling:
-@@ -520,8 +520,7 @@
+@@ -497,8 +497,7 @@
          # be assumed that no additional -I,-L directives are needed.
          if not cross_compiling:
              lib_dirs = self.compiler.library_dirs + [
@@ -239,8 +221,8 @@ Index: Python-3.3.0rc2/setup.py
 +                '/' + sys.lib, '/usr/' + sys.lib,
                  ]
              inc_dirs = self.compiler.include_dirs + ['/usr/include']
-         if cross_compiling:
-@@ -699,11 +698,11 @@
+         else:
+@@ -675,11 +674,11 @@
              elif curses_library:
                  readline_libs.append(curses_library)
              elif self.compiler.find_library_file(lib_dirs +
@@ -254,10 +236,10 @@ Index: Python-3.3.0rc2/setup.py
                                     extra_link_args=readline_extra_link_args,
                                     libraries=readline_libs) )
          else:
-Index: Python-3.3.0rc2/Lib/sysconfig.py
+Index: Python-3.3.2/Lib/sysconfig.py
 ===================================================================
---- Python-3.3.0rc2.orig/Lib/sysconfig.py	2012-09-09 02:11:00.000000000 -0700
-+++ Python-3.3.0rc2/Lib/sysconfig.py	2012-09-20 22:46:53.277124015 -0700
+--- Python-3.3.2.orig/Lib/sysconfig.py	2013-05-15 09:32:55.000000000 -0700
++++ Python-3.3.2/Lib/sysconfig.py	2013-07-27 16:19:54.111877246 -0700
 @@ -21,10 +21,10 @@
  
  _INSTALL_SCHEMES = {
@@ -300,13 +282,13 @@ Index: Python-3.3.0rc2/Lib/sysconfig.py
          'include': '{userbase}/include/python{py_version_short}',
          'scripts': '{userbase}/bin',
          'data': '{userbase}',
-Index: Python-3.3.0b2/configure.ac
+Index: Python-3.3.2/configure.ac
 ===================================================================
---- Python-3.3.0b2.orig/configure.ac	2012-08-11 08:54:25.000000000 +0200
-+++ Python-3.3.0b2/configure.ac	2012-08-23 14:49:29.000000000 +0200
-@@ -746,6 +746,41 @@
-     esac;;
- esac
+--- Python-3.3.2.orig/configure.ac	2013-05-15 09:33:00.000000000 -0700
++++ Python-3.3.2/configure.ac	2013-07-27 16:19:54.111877246 -0700
+@@ -769,6 +769,41 @@
+ MULTIARCH=$($CC --print-multiarch 2>/dev/null)
+ AC_SUBST(MULTIARCH)
  
 +AC_SUBST(ARCH)
 +AC_MSG_CHECKING(ARCH)
