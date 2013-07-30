@@ -1,3 +1,9 @@
+Dont cross compile site packages
+
+-Khem
+
+Upstream-Status: Inappropriate[Embedded-Specific]
+
 ---
  Makefile.pre.in |   16 ----------------
  1 file changed, 16 deletions(-)

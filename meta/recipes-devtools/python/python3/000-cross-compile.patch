@@ -1,3 +1,10 @@
+We cross compile python. This patch uses tools from host/native
+python instead of in-tree tools
+
+-Khem
+
+Upstream-Status: Inappropriate[Configuration Specific]
+
 ---
  Makefile.pre.in |   25 +++++++++++++------------
  1 file changed, 13 insertions(+), 12 deletions(-)

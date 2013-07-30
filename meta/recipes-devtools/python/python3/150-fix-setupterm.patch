@@ -1,3 +1,9 @@
+Fix warning with newer compiler
+
+-Khem
+
+Upstream-Status: Pending
+
 --- a/Modules/_cursesmodule.c
 +++ b/Modules/_cursesmodule.c
 @@ -116,7 +116,7 @@ char *PyCursesVersion = "2.2";

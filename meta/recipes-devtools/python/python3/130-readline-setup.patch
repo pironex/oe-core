@@ -1,3 +1,9 @@
+package python-readline
+
+-Khem
+
+Upstream-Status: Inappropriate [Embedded Specific]
+
 --- a/setup.py
 +++ b/setup.py
 @@ -666,45 +666,7 @@ class PyBuildExt(build_ext):

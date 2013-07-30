@@ -1,3 +1,9 @@
+run completer on raw types too
+
+-Khem
+
+Upstream-Status: Pending
+
 diff --git a/IPython/core/completer.py b/IPython/core/completer.py
 index 8cb2345..076e2fa 100644
 --- a/IPython/core/completer.py

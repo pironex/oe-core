@@ -3,6 +3,8 @@ From: xantares <xantares@fujitsu-l64.(none)>
 Date: Sun, 24 Feb 2013 15:49:36 +0100
 Subject: [PATCH] Fixed just zmq detection
 
+Upstream-Status: Backport
+
 ---
  buildutils/detect.py |    6 ++++++
  setup.py             |    8 ++++++--

@@ -1,3 +1,9 @@
+consider opkg directories when cleaning up
+
+-Khem
+
+Upstream-Status: Inappropriate [OE specific]
+
 ---
  Makefile.pre.in |    6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)

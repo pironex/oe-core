@@ -1,3 +1,9 @@
+Do not hardcode /usr into include paths when cross compiling
+
+-Khem
+
+Upstream-Status: Pending
+ 
 ---
  setup.py |   15 ++-------------
  1 file changed, 2 insertions(+), 13 deletions(-)
