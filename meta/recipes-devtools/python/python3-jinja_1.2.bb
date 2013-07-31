@@ -23,7 +23,7 @@ SRC_URI[sha256sum] = "36252f3d0356008a31a537a31cfba189f7b5898b8e2da454f72ea5f987
 
 S = "${WORKDIR}/${SRCNAME}-${PV}"
 
-inherit setuptools3
+inherit setuptools3 python3native
 
 do_sanitize() {
 
