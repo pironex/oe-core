@@ -21,6 +21,7 @@ file://06-ctypes-libffi-fix-configure.patch \
 file://shutil-follow-symlink-fix.patch \
 file://0001-h2py-Fix-issue-13032-where-it-fails-with-UnicodeDeco.patch \
 file://sysroot-include-headers.patch \
+file://unixccompiler.patch \
 ${DISTRO_SRC_URI} \
 "
 SRC_URI[md5sum] = "7dffe775f3bea68a44f762a3490e5e28"

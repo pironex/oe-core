@@ -31,6 +31,7 @@ SRC_URI += "\
             file://python-3.3-multilib.patch \
             file://shutil-follow-symlink-fix.patch \
             file://sysroot-include-headers.patch \
+            file://unixccompiler.patch \
            "
 SRC_URI[md5sum] = "7dffe775f3bea68a44f762a3490e5e28"
 SRC_URI[sha256sum] = "f77202fe2bbc203205d7bd6e8452567fa1d9bc97f6957c9ef753d9a36cdcbe9a"
