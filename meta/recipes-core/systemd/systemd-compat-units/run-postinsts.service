@@ -10,7 +10,7 @@ ExecStart=/etc/rcS.d/S98run-postinsts
 RemainAfterExit=No
 Type=oneshot
 StandardOutput=syslog
-TimeoutSec=0
+TimeoutSec=600
 
 [Install]
 WantedBy=basic.target
