@@ -15,7 +15,7 @@ DEPENDS += "${@base_contains('DISTRO_FEATURES', 'pam', 'libpam', '', d)}"
 
 SECTION = "base/shell"
 
-inherit gtk-doc useradd pkgconfig autotools perlnative update-rc.d update-alternatives
+inherit gtk-doc useradd pkgconfig autotools perlnative update-rc.d update-alternatives qemu
 
 SRC_URI = "http://www.freedesktop.org/software/systemd/systemd-${PV}.tar.xz \
            file://touchscreen.rules \
@@ -26,8 +26,8 @@ SRC_URI = "http://www.freedesktop.org/software/systemd/systemd-${PV}.tar.xz \
            file://init \
           "
 
-SRC_URI[md5sum] = "a07619bb19f48164fbf0761d12fd39a8"
-SRC_URI[sha256sum] = "072c393503c7c1e55ca7acf3db659cbd28c7fe5fa94fab3db95360bafd96731b"
+SRC_URI[md5sum] = "89e36f2d3ba963020b72738549954cbc"
+SRC_URI[sha256sum] = "4c993de071118ea1df7ffc4be26ef0b0d78354ef15b2743a2783d20edfcde9de"
 
 UCLIBCPATCHES = ""
 UCLIBCPATCHES_libc-uclibc = "file://systemd-pam-configure-check-uclibc.patch \
@@ -83,7 +83,6 @@ EXTRA_OECONF_append_libc-uclibc = " --disable-myhostname "
 do_configure_prepend() {
 	export CPP="${HOST_PREFIX}cpp ${TOOLCHAIN_OPTIONS} ${HOST_CC_ARCH}"
 
-	export STRINGS="${HOST_PREFIX}strings"
 	export GPERF="${HOST_PREFIX}gperf"
 
 	sed -i -e 's:=/root:=${ROOT_HOME}:g' ${S}/units/*.service*
@@ -278,10 +277,11 @@ ALTERNATIVE_PRIORITY[poweroff] ?= "300"
 
 pkg_postinst_udev-hwdb () {
 	if test -n "$D"; then
-		exit 1
+		${@qemu_run_binary(d, '$D', '${base_bindir}/udevadm')} hwdb --update \
+			--root $D
+	else
+		udevadm hwdb --update
 	fi
-
-	udevadm hwdb --update
 }
 
 pkg_prerm_udev-hwdb () {
