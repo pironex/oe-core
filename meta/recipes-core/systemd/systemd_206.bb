@@ -23,6 +23,7 @@ SRC_URI = "http://www.freedesktop.org/software/systemd/systemd-${PV}.tar.xz \
            ${UCLIBCPATCHES} \
            file://00-create-volatile.conf \
            file://init \
+           file://var-run.conf \
           "
 SRC_URI[md5sum] = "89e36f2d3ba963020b72738549954cbc"
 SRC_URI[sha256sum] = "4c993de071118ea1df7ffc4be26ef0b0d78354ef15b2743a2783d20edfcde9de"
