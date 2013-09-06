@@ -146,7 +146,7 @@ FILES_${PN}-kernel-install = "${bindir}/kernel-install \
                               ${sysconfdir}/kernel/ \
                               ${exec_prefix}/lib/kernel \
                              "
-FILES_${PN}-rpm-macros = "${libdir}/rpm \
+FILES_${PN}-rpm-macros = "${exec_prefix}/lib/rpm \
                          "
 
 FILES_${PN}-binfmt = "${sysconfdir}/binfmt.d/ \
