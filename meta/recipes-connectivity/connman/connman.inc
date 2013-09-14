@@ -159,6 +159,7 @@ FILES_${PN}-tools = "${bindir}/wispr"
 FILES_${PN}-tests = "${bindir}/*-test ${libdir}/${BPN}/test/*"
 RDEPENDS_${PN}-tests = "python-dbus python-pygobject python-textutils python-subprocess python-fcntl python-netclient"
 
+RPROVIDES_${PN} += "connman-systemd"
 FILES_${PN}-client = "${bindir}/connmanctl"
 
 FILES_${PN} = "${bindir}/* ${sbindir}/* ${libexecdir}/* ${libdir}/lib*.so.* \
