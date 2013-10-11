@@ -209,7 +209,6 @@ FILES_udev-dbg += "/lib/udev/.debug"
 RDEPENDS_udev += "udev-utils"
 RPROVIDES_udev = "hotplug"
 RRECOMMENDS_udev += "udev-hwdb"
-
 RDEPENDS_udev-hwdb += "udev-utils"
 
 FILES_udev += "${base_sbindir}/udevd \
