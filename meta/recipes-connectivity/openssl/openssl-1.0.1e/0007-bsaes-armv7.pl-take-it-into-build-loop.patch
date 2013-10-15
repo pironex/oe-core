@@ -1,0 +1,76 @@
+From 038a616d293f818e423897453d5087f9c90991c6 Mon Sep 17 00:00:00 2001
+From: Andy Polyakov <appro@openssl.org>
+Date: Tue, 23 Apr 2013 17:49:54 +0200
+Subject: [PATCH 07/15] bsaes-armv7.pl: take it into build loop.
+
+Upstream-Status: Backport
+
+---
+ Configure                     | 2 +-
+ crypto/aes/Makefile           | 2 ++
+ crypto/aes/asm/bsaes-armv7.pl | 9 +++++++++
+ 4 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/Configure b/Configure
+index 9c803dc..43cfd24 100755
+--- a/Configure
++++ b/Configure
+@@ -136,7 +136,7 @@ my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-a
+ my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
+ my $mips64_asm=":bn-mips.o mips-mont.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o sha512-mips.o::::::::";
+ my $s390x_asm="s390xcap.o s390xcpuid.o:bn-s390x.o s390x-mont.o s390x-gf2m.o::aes-s390x.o aes-ctr.o aes-xts.o:::sha1-s390x.o sha256-s390x.o sha512-s390x.o::rc4-s390x.o:::::ghash-s390x.o:";
+-my $armv4_asm="armcap.o armv4cpuid.o:bn_asm.o armv4-mont.o armv4-gf2m.o::aes_cbc.o aes-armv4.o:::sha1-armv4-large.o sha256-armv4.o sha512-armv4.o:::::::ghash-armv4.o::void";
++my $armv4_asm="armcap.o armv4cpuid.o:bn_asm.o armv4-mont.o armv4-gf2m.o::aes_cbc.o aes-armv4.o bsaes-armv7.o:::sha1-armv4-large.o sha256-armv4.o sha512-armv4.o:::::::ghash-armv4.o::void";
+ my $parisc11_asm="pariscid.o:bn_asm.o parisc-mont.o::aes_core.o aes_cbc.o aes-parisc.o:::sha1-parisc.o sha256-parisc.o sha512-parisc.o::rc4-parisc.o:::::ghash-parisc.o::32";
+ my $parisc20_asm="pariscid.o:pa-risc2W.o parisc-mont.o::aes_core.o aes_cbc.o aes-parisc.o:::sha1-parisc.o sha256-parisc.o sha512-parisc.o::rc4-parisc.o:::::ghash-parisc.o::64";
+ my $ppc32_asm="ppccpuid.o ppccap.o:bn-ppc.o ppc-mont.o ppc64-mont.o::aes_core.o aes_cbc.o aes-ppc.o:::sha1-ppc.o sha256-ppc.o::::::::";
+diff --git a/crypto/aes/Makefile b/crypto/aes/Makefile
+index 45ede0a..9f149fb 100644
+--- a/crypto/aes/Makefile
++++ b/crypto/aes/Makefile
+@@ -81,6 +81,8 @@ aes-mips.S:	asm/aes-mips.pl
+ # GNU make "catch all"
+ aes-%.S:	asm/aes-%.pl;	$(PERL) $< $(PERLASM_SCHEME) > $@
+ aes-armv4.o:	aes-armv4.S
++bsaes-%.S:	asm/bsaes-%.pl;	$(PERL) $< $(PERLASM_SCHEME) $@
++bsaes-armv7.o:	bsaes-armv7.S
+ 
+ files:
+ 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
+diff --git a/crypto/aes/asm/bsaes-armv7.pl b/crypto/aes/asm/bsaes-armv7.pl
+index d901c58..71aae8d 100644
+--- a/crypto/aes/asm/bsaes-armv7.pl
++++ b/crypto/aes/asm/bsaes-armv7.pl
+@@ -26,6 +26,9 @@
+ # which is [much] worse than anticipated (for further details see
+ # http://www.openssl.org/~appro/Snapdragon-S4.html).
+ #
++# Cortex-A15 manages in 14.2/19.6 cycles [when integer-only code
++# manages in 20.0 cycles].
++#
+ # When comparing to x86_64 results keep in mind that NEON unit is
+ # [mostly] single-issue and thus can't [fully] benefit from
+ # instruction-level parallelism. And when comparing to aes-armv4
+@@ -617,6 +620,9 @@ ___
+ }
+ 
+ $code.=<<___;
++#include "arm_arch.h"
++
++#if __ARM_ARCH__>=7
+ .text
+ .code	32
+ .fpu	neon
+@@ -975,6 +981,9 @@ bsaes_decrypt_128:
+ .size	bsaes_decrypt_128,.-bsaes_decrypt_128
+ ___
+ }
++$code.=<<___;
++#endif
++___
+ 
+ $code =~ s/\`([^\`]*)\`/eval($1)/gem;
+ 
+-- 
+1.8.3.1
+
