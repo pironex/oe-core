@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=fcb02dc552a041dee27e4b85c7396067"
 SECTION = "base"
 DEPENDS = "util-linux attr e2fsprogs lzo acl"
 
-SRCREV = "e9ac73b441b1b05b57ce99be1aff02eac6929448"
+SRCREV = "8116550e16628794b76051b6b8ea503055c08d6f"
 SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/mason/btrfs-progs.git \
            file://weak-defaults.patch"
 
