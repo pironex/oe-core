@@ -208,6 +208,22 @@ do_install() {
 
         ln -s Config_heavy.pl ${D}${libdir}/perl/${PV}/Config_heavy-target.pl
 
+        # remove traces of build sysroot
+        sed -i -e s:--sysroot=${STAGING_DIR_HOST}::g \
+               -e s:${STAGING_LIBDIR}:${libdir}:g \
+               -e s:${STAGING_INCDIR}:${includedir}:g \
+               -e s:${STAGING_BINDIR_TOOLCHAIN}/${TARGET_PREFIX}:${bindir}:g \
+            ${D}${bindir}/h2* \
+            ${D}${libdir}/perl/5.14.3/CORE/config.h \
+            ${D}${libdir}/perl/5.14.3/CORE/perl.h \
+            ${D}${libdir}/perl/5.14.3/CORE/pp.h \
+            ${D}${libdir}/perl/5.14.3/Config.pm \
+            ${D}${libdir}/perl/5.14.3/Config.pod \
+            ${D}${libdir}/perl/5.14.3/Config_heavy.pl \
+            ${D}${libdir}/perl/5.14.3/ExtUtils/Liblist/Kid.pm \
+            ${D}${libdir}/perl/5.14.3/FileCache.pm \
+            ${D}${libdir}/perl/5.14.3/cacheout.pl \
+            ${D}${libdir}/perl/config.sh
 }
 
 do_install_append_class-nativesdk () {
