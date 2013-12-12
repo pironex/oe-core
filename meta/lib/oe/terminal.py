@@ -55,6 +55,10 @@ class Gnome(XTerminal):
     command = 'gnome-terminal --disable-factory -t "{title}" -x {command}'
     priority = 2
 
+class Mate(XTerminal):
+    command = 'mate-terminal --disable-factory -t "{title}" -x {command}'
+    priority = 2
+
 class Xfce(XTerminal):
     command = 'Terminal -T "{title}" -e "{command}"'
     priority = 2
@@ -108,7 +112,7 @@ class Screen(Terminal):
 class TmuxRunning(Terminal):
     """Open a new pane in the current running tmux window"""
     name = 'tmux-running'
-    command = 'tmux split-window {command}'
+    command = 'tmux split-window "{command}"'
     priority = 2.75
 
     def __init__(self, sh_cmd, title=None, env=None, d=None):

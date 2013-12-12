@@ -6,18 +6,34 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=0636e73ff0215e8d672dc4c32c317bb3 \
                     file://COPYING.LIB;md5=55ca817ccb7d5b5b66355690e9abc605 \
                     file://gst/tta/crc32.h;beginline=12;endline=29;md5=71a904d99ce7ae0c1cf129891b98145c"
 
-DEPENDS += "gst-plugins-base curl"
+DEPENDS += "gst-plugins-base"
 
 PR = "r4"
 
-inherit gettext
+inherit gettext gsettings
 
-EXTRA_OECONF += "--disable-examples --disable-experimental --disable-sdl --disable-cdaudio --disable-directfb \
-                 --with-plugins=wavpack,mpegvideoparse --disable-vdpau --disable-apexsink \
-                 --disable-orc --disable-neon"
+EXTRA_OECONF += "--disable-experimental \
+                 --disable-sdl --disable-cdaudio --disable-directfb \
+                 --disable-vdpau --disable-apexsink"
 
-PACKAGECONFIG ??= "${@base_contains('DISTRO_FEATURES', 'x11', 'librsvg', '', d)}"
-PACKAGECONFIG[librsvg] = "--enable-rsvg,--disable-rsvg,librsvg,"
+PACKAGECONFIG ??= "bzip curl \
+                   ${@base_contains('DISTRO_FEATURES', 'x11', 'rsvg', '', d)}"
+
+PACKAGECONFIG[bzip] = "--enable-bz2,--disable-bz2,bzip2"
+PACKAGECONFIG[curl] = "--enable-curl,--disable-curl,curl"
+PACKAGECONFIG[rsvg] = "--enable-rsvg,--disable-rsvg,librsvg,"
+PACKAGECONFIG[orc] = "--enable-orc,--disable-orc,orc"
+PACKAGECONFIG[neon] = "--enable-neon,--disable-neon,neon"
+PACKAGECONFIG[mms] = "--enable-libmms,--disable-libmms,libmms"
+PACKAGECONFIG[cog] = "--enable-cog,--disable-cog,libpng"
+PACKAGECONFIG[faad] = "--enable-faad,--disable-faad,faad2"
+PACKAGECONFIG[jp2k] = "--enable-jp2k,--disable-jp2k,jasper"
+PACKAGECONFIG[modplug] = "--enable-modplug,--disable-modplug,libmodplug"
+PACKAGECONFIG[opus] = "--enable-opus,--disable-opus,libopus"
+PACKAGECONFIG[sndfile] = "--enable-sndfile,--disable-sndfile,libsndfile1"
+PACKAGECONFIG[vp8] = "--enable-vp8,--disable-vp8,libvpx"
+PACKAGECONFIG[ass] = "--enable-assrender,--disable-assrender,libass"
+PACKAGECONFIG[openal] = "--enable-openal,--disable-openal,openal-soft"
 
 ARM_INSTRUCTION_SET = "arm"
 
