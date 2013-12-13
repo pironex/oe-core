@@ -13,6 +13,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "autogen-native flex-native bison-native"
 
+DEFAULT_PREFERENCE = "-1"
+DEFAULT_PREFERENCE_arm = "1"
+
 PV = "2.00+${SRCPV}"
 SRCREV = "16c8f78513d312242c752fbc038e471eda65cc9e"
 SRC_URI = "git://git.savannah.gnu.org/grub.git \
