@@ -24,6 +24,7 @@ SRC_URI = "http://www.freedesktop.org/software/systemd/systemd-${PV}.tar.xz \
            ${UCLIBCPATCHES} \
            file://00-create-volatile.conf \
            file://init \
+           file://var-run.conf \
            file://run-ptest \
           "
 SRC_URI[md5sum] = "df64550d92afbffb4f67a434193ee165"
@@ -105,6 +106,8 @@ do_install() {
 	touch ${D}${sysconfdir}/machine-id
 
 	install -m 0644 ${WORKDIR}/*.rules ${D}${sysconfdir}/udev/rules.d/
+
+	install -m 0644 ${WORKDIR}/var-run.conf ${D}${sysconfdir}/tmpfiles.d/
 
 	install -m 0644 ${WORKDIR}/00-create-volatile.conf ${D}${sysconfdir}/tmpfiles.d/
 
@@ -232,7 +235,6 @@ FILES_udev-dbg += "/lib/udev/.debug"
 RDEPENDS_udev += "udev-utils"
 RPROVIDES_udev = "hotplug"
 RRECOMMENDS_udev += "udev-hwdb"
-
 RDEPENDS_udev-hwdb += "udev-utils"
 
 FILES_udev += "${base_sbindir}/udevd \
