@@ -24,6 +24,7 @@ PR = "r2"
 SRC_URI = "http://www.libsdl.org/release/SDL-${PV}.tar.gz \
            file://configure_tweak.patch \
            file://libsdl-1.2.15-xdata32.patch \
+           file://0001-x11-Bypass-SetGammaRamp-when-changing-gamma.patch \
           "
 
 S = "${WORKDIR}/SDL-${PV}"
