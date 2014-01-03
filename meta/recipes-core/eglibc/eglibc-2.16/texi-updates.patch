@@ -1,0 +1,781 @@
+backport from eglibc 2.17
+
+diff -Nurd libc.org/manual/argp.texi libc/manual/argp.texi
+--- libc.org/manual/argp.texi	2012-06-12 16:47:12.000000000 +0200
++++ libc/manual/argp.texi	2012-12-25 11:39:27.000000000 +0100
+@@ -561,85 +561,6 @@
+ @code{ARGP_KEY_ERROR}.  No further calls are made, except the final call
+ with @code{ARGP_KEY_FINI}.
+ 
+-@node Argp Helper Functions, , Argp Parsing State, Argp Parser Functions
+-@subsubsection Functions For Use in Argp Parsers
+-
+-Argp provides a number of functions available to the user of argp
+-(@pxref{Argp Parser Functions}), mostly for producing error messages.
+-These take as their first argument the @var{state} argument to the
+-parser function.  @xref{Argp Parsing State}.
+-
+-
+-@cindex usage messages, in argp
+-@comment argp.h
+-@comment GNU
+-@deftypefun void argp_usage (const struct argp_state *@var{state})
+-Outputs the standard usage message for the argp parser referred to by
+-@var{state} to @code{@var{state}->err_stream} and terminate the program
+-with @code{exit (argp_err_exit_status)}.  @xref{Argp Global Variables}.
+-@end deftypefun
+-
+-@cindex syntax error messages, in argp
+-@comment argp.h
+-@comment GNU
+-@deftypefun void argp_error (const struct argp_state *@var{state}, const char *@var{fmt}, @dots{})
+-Prints the printf format string @var{fmt} and following args, preceded
+-by the program name and @samp{:}, and followed by a @w{@samp{Try @dots{}
+---help}} message, and terminates the program with an exit status of
+-@code{argp_err_exit_status}.  @xref{Argp Global Variables}.
+-@end deftypefun
+-
+-@cindex error messages, in argp
+-@comment argp.h
+-@comment GNU
+-@deftypefun void argp_failure (const struct argp_state *@var{state}, int @var{status}, int @var{errnum}, const char *@var{fmt}, @dots{})
+-Similar to the standard gnu error-reporting function @code{error}, this
+-prints the program name and @samp{:}, the printf format string
+-@var{fmt}, and the appropriate following args.  If it is non-zero, the
+-standard unix error text for @var{errnum} is printed.  If @var{status} is
+-non-zero, it terminates the program with that value as its exit status.
+-
+-The difference between @code{argp_failure} and @code{argp_error} is that
+-@code{argp_error} is for @emph{parsing errors}, whereas
+-@code{argp_failure} is for other problems that occur during parsing but
+-don't reflect a syntactic problem with the input, such as illegal values
+-for options, bad phase of the moon, etc.
+-@end deftypefun
+-
+-@comment argp.h
+-@comment GNU
+-@deftypefun void argp_state_help (const struct argp_state *@var{state}, FILE *@var{stream}, unsigned @var{flags})
+-Outputs a help message for the argp parser referred to by @var{state},
+-to @var{stream}.  The @var{flags} argument determines what sort of help
+-message is produced.  @xref{Argp Help Flags}.
+-@end deftypefun
+-
+-Error output is sent to @code{@var{state}->err_stream}, and the program
+-name printed is @code{@var{state}->name}.
+-
+-The output or program termination behavior of these functions may be
+-suppressed if the @code{ARGP_NO_EXIT} or @code{ARGP_NO_ERRS} flags are
+-passed to @code{argp_parse}.  @xref{Argp Flags}.
+-
+-This behavior is useful if an argp parser is exported for use by other
+-programs (e.g., by a library), and may be used in a context where it is
+-not desirable to terminate the program in response to parsing errors.  In
+-argp parsers intended for such general use, and for the case where the
+-program @emph{doesn't} terminate, calls to any of these functions should
+-be followed by code that returns the appropriate error code:
+-
+-@smallexample
+-if (@var{bad argument syntax})
+-  @{
+-     argp_usage (@var{state});
+-     return EINVAL;
+-  @}
+-@end smallexample
+-
+-@noindent
+-If a parser function will @emph{only} be used when @code{ARGP_NO_EXIT}
+-is not set, the return may be omitted.
+-
+ @node Argp Parsing State, Argp Helper Functions, Argp Special Keys, Argp Parser Functions
+ @subsubsection Argp Parsing State
+ 
+@@ -726,6 +647,85 @@
+ @end table
+ @end deftp
+ 
++@node Argp Helper Functions, , Argp Parsing State, Argp Parser Functions
++@subsubsection Functions For Use in Argp Parsers
++
++Argp provides a number of functions available to the user of argp
++(@pxref{Argp Parser Functions}), mostly for producing error messages.
++These take as their first argument the @var{state} argument to the
++parser function.  @xref{Argp Parsing State}.
++
++
++@cindex usage messages, in argp
++@comment argp.h
++@comment GNU
++@deftypefun void argp_usage (const struct argp_state *@var{state})
++Outputs the standard usage message for the argp parser referred to by
++@var{state} to @code{@var{state}->err_stream} and terminate the program
++with @code{exit (argp_err_exit_status)}.  @xref{Argp Global Variables}.
++@end deftypefun
++
++@cindex syntax error messages, in argp
++@comment argp.h
++@comment GNU
++@deftypefun void argp_error (const struct argp_state *@var{state}, const char *@var{fmt}, @dots{})
++Prints the printf format string @var{fmt} and following args, preceded
++by the program name and @samp{:}, and followed by a @w{@samp{Try @dots{}
++--help}} message, and terminates the program with an exit status of
++@code{argp_err_exit_status}.  @xref{Argp Global Variables}.
++@end deftypefun
++
++@cindex error messages, in argp
++@comment argp.h
++@comment GNU
++@deftypefun void argp_failure (const struct argp_state *@var{state}, int @var{status}, int @var{errnum}, const char *@var{fmt}, @dots{})
++Similar to the standard gnu error-reporting function @code{error}, this
++prints the program name and @samp{:}, the printf format string
++@var{fmt}, and the appropriate following args.  If it is non-zero, the
++standard unix error text for @var{errnum} is printed.  If @var{status} is
++non-zero, it terminates the program with that value as its exit status.
++
++The difference between @code{argp_failure} and @code{argp_error} is that
++@code{argp_error} is for @emph{parsing errors}, whereas
++@code{argp_failure} is for other problems that occur during parsing but
++don't reflect a syntactic problem with the input, such as illegal values
++for options, bad phase of the moon, etc.
++@end deftypefun
++
++@comment argp.h
++@comment GNU
++@deftypefun void argp_state_help (const struct argp_state *@var{state}, FILE *@var{stream}, unsigned @var{flags})
++Outputs a help message for the argp parser referred to by @var{state},
++to @var{stream}.  The @var{flags} argument determines what sort of help
++message is produced.  @xref{Argp Help Flags}.
++@end deftypefun
++
++Error output is sent to @code{@var{state}->err_stream}, and the program
++name printed is @code{@var{state}->name}.
++
++The output or program termination behavior of these functions may be
++suppressed if the @code{ARGP_NO_EXIT} or @code{ARGP_NO_ERRS} flags are
++passed to @code{argp_parse}.  @xref{Argp Flags}.
++
++This behavior is useful if an argp parser is exported for use by other
++programs (e.g., by a library), and may be used in a context where it is
++not desirable to terminate the program in response to parsing errors.  In
++argp parsers intended for such general use, and for the case where the
++program @emph{doesn't} terminate, calls to any of these functions should
++be followed by code that returns the appropriate error code:
++
++@smallexample
++if (@var{bad argument syntax})
++  @{
++     argp_usage (@var{state});
++     return EINVAL;
++  @}
++@end smallexample
++
++@noindent
++If a parser function will @emph{only} be used when @code{ARGP_NO_EXIT}
++is not set, the return may be omitted.
++
+ @node Argp Children, Argp Help Filtering, Argp Parser Functions, Argp Parsers
+ @subsection Combining Multiple Argp Parsers
+ 
+diff -Nurd libc.org/manual/arith.texi libc/manual/arith.texi
+--- libc.org/manual/arith.texi	2012-03-03 19:18:04.000000000 +0100
++++ libc/manual/arith.texi	2012-12-02 22:11:45.000000000 +0100
+@@ -1064,7 +1064,7 @@
+ @comment GNU
+ @deftypefun int feenableexcept (int @var{excepts})
+ This functions enables traps for each of the exceptions as indicated by
+-the parameter @var{except}.  The individual excepetions are described in
++the parameter @var{except}.  The individual exceptions are described in
+ @ref{Status bit operations}.  Only the specified exceptions are
+ enabled, the status of the other exceptions is not changed.
+ 
+@@ -1076,7 +1076,7 @@
+ @comment GNU
+ @deftypefun int fedisableexcept (int @var{excepts})
+ This functions disables traps for each of the exceptions as indicated by
+-the parameter @var{except}.  The individual excepetions are described in
++the parameter @var{except}.  The individual exceptions are described in
+ @ref{Status bit operations}.  Only the specified exceptions are
+ disabled, the status of the other exceptions is not changed.
+ 
+@@ -1966,10 +1966,10 @@
+ These functions return the argument of the complex number @var{z}.
+ The argument of a complex number is the angle in the complex plane
+ between the positive real axis and a line passing through zero and the
+-number.  This angle is measured in the usual fashion and ranges from @math{0}
+-to @math{2@pi{}}.
++number.  This angle is measured in the usual fashion and ranges from
++@math{-@pi{}} to @math{@pi{}}.
+ 
+-@code{carg} has a branch cut along the positive real axis.
++@code{carg} has a branch cut along the negative real axis.
+ @end deftypefun
+ 
+ @comment complex.h
+diff -Nurd libc.org/manual/charset.texi libc/manual/charset.texi
+--- libc.org/manual/charset.texi	2012-03-10 00:15:08.000000000 +0100
++++ libc/manual/charset.texi	2012-07-31 17:30:38.000000000 +0200
+@@ -204,7 +204,7 @@
+ 
+ These internal representations present problems when it comes to storing
+ and transmittal.  Because each single wide character consists of more
+-than one byte, they are effected by byte-ordering.  Thus, machines with
++than one byte, they are affected by byte-ordering.  Thus, machines with
+ different endianesses would see different values when accessing the same
+ data.  This byte ordering concern also applies for communication protocols
+ that are all byte-based and therefore require that the sender has to
+@@ -225,7 +225,7 @@
+ the character @code{'/'} is used in the encoding @emph{only} to
+ represent itself.  Things are a bit different for character sets like
+ EBCDIC (Extended Binary Coded Decimal Interchange Code, a character set
+-family used by IBM), but if the operation system does not understand
++family used by IBM), but if the operating system does not understand
+ EBCDIC directly the parameters-to-system calls have to be converted
+ first anyhow.
+ 
+@@ -257,7 +257,7 @@
+ big advantage that whenever one can identify the beginning of the byte
+ sequence of a character one can interpret a text correctly.  Examples of
+ character sets using this policy are the various EUC character sets
+-(used by Sun's operations systems, EUC-JP, EUC-KR, EUC-TW, and EUC-CN)
++(used by Sun's operating systems, EUC-JP, EUC-KR, EUC-TW, and EUC-CN)
+ or Shift_JIS (SJIS, a Japanese encoding).
+ 
+ But there are also character sets using a state that is valid for more
+@@ -2225,7 +2225,7 @@
+ intermediate step of the triangulation.  We have said that this is UCS-4
+ but actually that is not quite right.  The UCS-4 specification also
+ includes the specification of the byte ordering used.  Since a UCS-4 value
+-consists of four bytes, a stored value is effected by byte ordering.  The
++consists of four bytes, a stored value is affected by byte ordering.  The
+ internal representation is @emph{not} the same as UCS-4 in case the byte
+ ordering of the processor (or at least the running process) is not the
+ same as the one required for UCS-4.  This is done for performance reasons
+diff -Nurd libc.org/manual/conf.texi libc/manual/conf.texi
+--- libc.org/manual/conf.texi	2012-04-21 19:19:39.000000000 +0200
++++ libc/manual/conf.texi	2012-12-25 11:39:27.000000000 +0100
+@@ -1147,14 +1147,16 @@
+ @comment limits.h
+ @comment POSIX.1
+ @deftypevr Macro int NAME_MAX
+-The uniform system limit (if any) for the length of a file name component.
++The uniform system limit (if any) for the length of a file name component, not
++including the terminating null character.
+ @end deftypevr
+ 
+ @comment limits.h
+ @comment POSIX.1
+ @deftypevr Macro int PATH_MAX
+ The uniform system limit (if any) for the length of an entire file name (that
+-is, the argument given to system calls such as @code{open}).
++is, the argument given to system calls such as @code{open}), including the
++terminating null character.
+ @end deftypevr
+ 
+ @cindex limits, pipe buffer size
+diff -Nurd libc.org/manual/contrib.texi libc/manual/contrib.texi
+--- libc.org/manual/contrib.texi	2012-06-29 18:32:27.000000000 +0200
++++ libc/manual/contrib.texi	2012-12-25 11:39:27.000000000 +0100
+@@ -168,7 +168,8 @@
+ @item
+ Hongjiu Lu for providing the support for a Linux 32-bit runtime
+ environment under x86-64 (x32), for porting to Linux on IA64, for
+-improved string functions and many bug fixes.
++improved string functions, a framework for testing IFUNC
++implementations, and many bug fixes.
+ 
+ @item
+ Luis Machado for optimized functions on PowerPC.
+@@ -215,16 +216,20 @@
+ implementations for PowerPC.
+ 
+ @item
+-Joseph S. Myers for numerous bug fixes for the libm functions and for
+-his maintainership of the ARM and MIPS architectures.
++Joseph S. Myers for numerous bug fixes for the libm functions, for
++his maintainership of the ARM and MIPS architectures, improving
++cross-compilation and cross-testing of @theglibc{}, expanded
++coverage of conformtest, and merging the ports/ subdirectory
++into the @glibcadj{} main repository.
+ 
+ @item
+ Carlos O'Donell for his maintainership of the HPPA architecture and
+ maintaining @theglibc{} web pages.
+ 
+ @item
+-Alexandra Oliva for adding TLS descriptors for LD and GD on x86 and
+-x86-64.
++Alexandre Oliva for adding TLS descriptors for LD and GD on x86 and
++x86-64, for the am33 port, for completing the MIPS n64/n32/o32 multilib
++port, and for various fixes.
+ 
+ @item
+ Paul Pluzhnikov for various fixes.
+@@ -267,6 +272,9 @@
+ Carlos Eduardo Seo for optimized functions on PowerPC.
+ 
+ @item
++Marcus Shawcroft for contributing the AArch64 port.
++
++@item
+ Franz Sirl for various fixes.
+ 
+ @item
+diff -Nurd libc.org/manual/examples/inetcli.c libc/manual/examples/inetcli.c
+--- libc.org/manual/examples/inetcli.c	2012-03-07 20:31:25.000000000 +0100
++++ libc/manual/examples/inetcli.c	2012-09-25 16:42:18.000000000 +0200
+@@ -26,7 +26,7 @@
+ 
+ #define PORT		5555
+ #define MESSAGE		"Yow!!! Are we having fun yet?!?"
+-#define SERVERHOST 	"mescaline.gnu.org"
++#define SERVERHOST 	"www.gnu.org"
+ 
+ void
+ write_to_server (int filedes)
+diff -Nurd libc.org/manual/filesys.texi libc/manual/filesys.texi
+--- libc.org/manual/filesys.texi	2012-04-21 19:19:39.000000000 +0200
++++ libc/manual/filesys.texi	2012-11-09 23:50:35.000000000 +0100
+@@ -287,7 +287,7 @@
+ This member is a BSD extension.  The symbol @code{_DIRENT_HAVE_D_TYPE}
+ is defined if this member is available.  On systems where it is used, it
+ corresponds to the file type bits in the @code{st_mode} member of
+-@code{struct statbuf}.  If the value cannot be determine the member
++@code{struct stat}.  If the value cannot be determine the member
+ value is DT_UNKNOWN.  These two macros convert between @code{d_type}
+ values and @code{st_mode} values:
+ 
+diff -Nurd libc.org/manual/install.texi libc/manual/install.texi
+--- libc.org/manual/install.texi	2012-05-26 19:46:57.000000000 +0200
++++ libc/manual/install.texi	2012-11-09 23:50:35.000000000 +0100
+@@ -2,6 +2,7 @@
+ @c Makeinfo ignores it when processing the file from the include.
+ @setfilename INSTALL
+ @include macros.texi
++@include pkgvers.texi
+ 
+ @node Installation, Maintenance, Library Summary, Top
+ @c %MENU% How to install the GNU C Library
+@@ -173,6 +174,19 @@
+ @var{CFLAGS}.
+ 
+ If you specify just @samp{--build}, @code{configure} will get confused.
++
++@item --with-pkgversion=@var{version}
++Specify a description, possibly including a build number or build
++date, of the binaries being built, to be included in
++@option{--version} output from programs installed with @theglibc{}.
++For example, @option{--with-pkgversion='FooBar GNU/Linux glibc build
++123'}.  The default value is @samp{GNU libc}.
++
++@item --with-bugurl=@var{url}
++Specify the URL that users should visit if they wish to report a bug,
++to be included in @option{--help} output from programs installed with
++@theglibc{}.  The default value refers to the main bug-reporting
++information for @theglibc{}.
+ @end table
+ 
+ To build the library and related programs, type @code{make}.  This will
+@@ -224,7 +238,25 @@
+ run on the build system as part of compiling the library.  You may need to
+ set @code{AR} to cross-compiling versions of @code{ar}
+ if the native tools are not configured to work with
+-object files for the target you configured for.
++object files for the target you configured for.  When cross-compiling
++@theglibc{}, it may be tested using @samp{make check
++test-wrapper="@var{srcdir}/scripts/cross-test-ssh.sh @var{hostname}"},
++where @var{srcdir} is the absolute directory name for the main source
++directory and @var{hostname} is the host name of a system that can run
++the newly built binaries of @theglibc{}.  The source and build
++directories must be visible at the same locations on both the build
++system and @var{hostname}.
++
++In general, when testing @theglibc{}, @samp{test-wrapper} may be set
++to the name and arguments of any program to run newly built binaries.
++This program must preserve the arguments to the binary being run, its
++working directory, all environment variables set as part of testing
++and the standard input, output and error file descriptors.  If
++@samp{@var{test-wrapper} env} will not work to run a program with
++environment variables set, then @samp{test-wrapper-env} must be set to
++a program that runs a newly built program with environment variable
++assignments in effect, those assignments being specified as
++@samp{@var{var}=@var{value}} before the name of the program to be run.
+ 
+ 
+ @node Running make install
+@@ -440,7 +472,7 @@
+ 
+ It is a good idea to verify that the problem has not already been
+ reported.  Bugs are documented in two places: The file @file{BUGS}
+-describes a number of well known bugs and the upstream GNU C library
++describes a number of well known bugs and the central @glibcadj{}
+ bug tracking system has a
+ WWW interface at
+ @url{http://sourceware.org/bugzilla/}.  The WWW
+diff -Nurd libc.org/manual/lang.texi libc/manual/lang.texi
+--- libc.org/manual/lang.texi	2012-03-21 21:25:11.000000000 +0100
++++ libc/manual/lang.texi	2012-07-31 17:30:38.000000000 +0200
+@@ -463,28 +463,33 @@
+ of the same type.
+ 
+ @comment stdarg.h
+-@comment GNU
+-@deftypefn {Macro} void __va_copy (va_list @var{dest}, va_list @var{src})
+-The @code{__va_copy} macro allows copying of objects of type
++@comment ISO
++@deftypefn {Macro} void va_copy (va_list @var{dest}, va_list @var{src})
++@deftypefnx {Macro} void __va_copy (va_list @var{dest}, va_list @var{src})
++The @code{va_copy} macro allows copying of objects of type
+ @code{va_list} even if this is not an integral type.  The argument pointer
+ in @var{dest} is initialized to point to the same argument as the
+ pointer in @var{src}.
+ 
+-This macro is a GNU extension but it will hopefully also be available in
+-the next update of the ISO C standard.
++This macro was added in ISO C99.  When building for strict conformance
++to ISO C90 (@samp{gcc -ansi}), it is not available.  The macro
++@code{__va_copy} is available as a GNU extension in any standards
++mode; before GCC 3.0, it was the only macro for this functionality.
+ @end deftypefn
+ 
+-If you want to use @code{__va_copy} you should always be prepared for the
++If you want to use @code{va_copy} and be portable to pre-C99 systems,
++you should always be prepared for the
+ possibility that this macro will not be available.  On architectures where a
+-simple assignment is invalid, hopefully @code{__va_copy} @emph{will} be available,
+-so one should always write something like this:
++simple assignment is invalid, hopefully @code{va_copy} @emph{will} be available,
++so one should always write something like this if concerned about
++pre-C99 portability:
+ 
+ @smallexample
+ @{
+   va_list ap, save;
+   @dots{}
+-#ifdef __va_copy
+-  __va_copy (save, ap);
++#ifdef va_copy
++  va_copy (save, ap);
+ #else
+   save = ap;
+ #endif
+diff -Nurd libc.org/manual/libc.texinfo libc/manual/libc.texinfo
+--- libc.org/manual/libc.texinfo	2012-03-03 19:18:04.000000000 +0100
++++ libc/manual/libc.texinfo	2012-11-09 23:50:35.000000000 +0100
+@@ -38,8 +38,13 @@
+ This is
+ @c Disabled (printed editions, see above).
+ @c Edition @value{EDITION} of
+-@cite{The GNU C Library Reference Manual}, for version @value{VERSION}
+-@value{PKGVERSION}.
++@cite{The GNU C Library Reference Manual}, for version
++@ifset PKGVERSION_DEFAULT
++@value{VERSION}.
++@end ifset
++@ifclear PKGVERSION_DEFAULT
++@value{VERSION} @value{PKGVERSION}.
++@end ifclear
+ 
+ Copyright @copyright{} 1993--2012 Free Software Foundation, Inc.
+ 
+@@ -73,8 +78,10 @@
+ @c @center Edition @value{EDITION}
+ @c @sp 1
+ @center for version @value{VERSION}
++@ifclear PKGVERSION_DEFAULT
+ @sp 1
+ @center @value{PKGVERSION}
++@end ifclear
+ @page
+ @vskip 0pt plus 1filll
+ @insertcopying
+@@ -101,7 +108,9 @@
+ @c Disabled (printed editions, see above).
+ @c Edition @value{EDITION} of
+ @cite{The GNU C Library Reference Manual}, for Version @value{VERSION}
++@ifclear PKGVERSION_DEFAULT
+ @value{PKGVERSION}
++@end ifclear
+ of @theglibc{}.
+ @end ifnottex
+ 
+diff -Nurd libc.org/manual/maint.texi libc/manual/maint.texi
+--- libc.org/manual/maint.texi	2012-06-12 16:47:12.000000000 +0200
++++ libc/manual/maint.texi	2012-11-06 18:31:45.000000000 +0100
+@@ -247,8 +247,7 @@
+ error, and set @code{errno} to @code{ENOSYS} (Function not implemented).
+ @xref{Error Reporting}.  If you define a stub function, you must place
+ the statement @code{stub_warning(@var{function})}, where @var{function}
+-is the name of your function, after its definition; also, you must
+-include the file @code{<stub-tag.h>} into your file.  This causes the
++is the name of your function, after its definition.  This causes the
+ function to be listed in the installed @code{<gnu/stubs.h>}, and
+ makes GNU ld warn when the function is used.
+ 
+diff -Nurd libc.org/manual/Makefile libc/manual/Makefile
+--- libc.org/manual/Makefile	2012-06-12 16:47:12.000000000 +0200
++++ libc/manual/Makefile	2012-11-09 23:50:35.000000000 +0100
+@@ -114,10 +114,16 @@
+ 	touch $@
+ 
+ # Package version and bug reporting URL.
+-$(objpfx)pkgvers.texi: $(objpfx)stamp-pkgvers
+-$(objpfx)stamp-pkgvers:
+-	echo "@set PKGVERSION $(PKGVERSION_TEXI)" > $(objpfx)pkgvers-tmp
++$(objpfx)pkgvers.texi: $(objpfx)stamp-pkgvers ;
++$(objpfx)stamp-pkgvers: $(common-objpfx)config.make
++	echo "@ifclear PKGVERS" > $(objpfx)pkgvers-tmp
++	echo "@set PKGVERS" >> $(objpfx)pkgvers-tmp
++	echo "@set PKGVERSION $(PKGVERSION_TEXI)" >> $(objpfx)pkgvers-tmp
++	if [ "$(PKGVERSION_TEXI)" = "(GNU libc) " ]; then \
++	  echo "@set PKGVERSION_DEFAULT" >> $(objpfx)pkgvers-tmp; \
++	fi
+ 	echo "@set REPORT_BUGS_TO $(REPORT_BUGS_TEXI)" >> $(objpfx)pkgvers-tmp
++	echo "@end ifclear" >> $(objpfx)pkgvers-tmp
+ 	$(move-if-change) $(objpfx)pkgvers-tmp $(objpfx)pkgvers.texi
+ 	touch $@
+ 
+diff -Nurd libc.org/manual/memory.texi libc/manual/memory.texi
+--- libc.org/manual/memory.texi	2012-03-10 00:15:08.000000000 +0100
++++ libc/manual/memory.texi	2012-10-25 19:18:12.000000000 +0200
+@@ -16,8 +16,8 @@
+ @menu
+ * Memory Concepts::             An introduction to concepts and terminology.
+ * Memory Allocation::           Allocating storage for your program data
+-* Locking Pages::               Preventing page faults
+ * Resizing the Data Segment::   @code{brk}, @code{sbrk}
++* Locking Pages::               Preventing page faults
+ @end menu
+ 
+ Memory mapped I/O is not discussed in this chapter.  @xref{Memory-mapped I/O}.
+@@ -706,7 +706,10 @@
+ If non-zero, memory blocks are filled with values depending on some
+ low order bits of this parameter when they are allocated (except when
+ allocated by @code{calloc}) and freed.  This can be used to debug the
+-use of uninitialized or freed heap memory.
++use of uninitialized or freed heap memory.  Note that this option does not
++guarantee that the freed block will have any specific values.  It only
++guarantees that the content the block had before it was freed will be
++overwritten.
+ @end table
+ 
+ @end deftypefun
+diff -Nurd libc.org/manual/message.texi libc/manual/message.texi
+--- libc.org/manual/message.texi	2012-03-03 19:18:04.000000000 +0100
++++ libc/manual/message.texi	2012-12-25 11:39:27.000000000 +0100
+@@ -8,12 +8,12 @@
+ 
+ Printing messages in different languages can be implemented in different
+ ways.  One could add all the different languages in the source code and
+-add among the variants every time a message has to be printed.  This is
+-certainly no good solution since extending the set of languages is
+-difficult (the code must be changed) and the code itself can become
++choose among the variants every time a message has to be printed.  This is
++certainly not a good solution since extending the set of languages is
++cumbersome (the code must be changed) and the code itself can become
+ really big with dozens of message sets.
+ 
+-A better solution is to keep the message sets for each language are kept
++A better solution is to keep the message sets for each language
+ in separate files which are loaded at runtime depending on the language
+ selection of the user.
+ 
+@@ -32,7 +32,7 @@
+ 
+ @itemize @bullet
+ @item
+-locate the external data file with the appropriate translations.
++locate the external data file with the appropriate translations
+ @item
+ load the data and make it possible to address the messages
+ @item
+@@ -699,7 +699,6 @@
+ file is named @file{hello.msg} and the program source file @file{hello.c}):
+ 
+ @smallexample
+-@cartouche
+ % gencat -H msgnrs.h -o hello.cat hello.msg
+ % cat msgnrs.h
+ #define MainSet 0x1     /* hello.msg:4 */
+@@ -711,7 +710,6 @@
+ % ./hello
+ Hallo, Welt!
+ %
+-@end cartouche
+ @end smallexample
+ 
+ The call of the @code{gencat} program creates the missing header file
+@@ -727,7 +725,7 @@
+ 
+ Sun Microsystems tried to standardize a different approach to message
+ translation in the Uniforum group.  There never was a real standard
+-defined but still the interface was used in Sun's operation systems.
++defined but still the interface was used in Sun's operating systems.
+ Since this approach fits better in the development process of free
+ software it is also used throughout the GNU project and the GNU
+ @file{gettext} package provides support for this outside @theglibc{}.
+@@ -1801,16 +1799,16 @@
+ 
+ The @code{xgettext} program can be used to automatically extract the
+ translatable messages from a source file.  I.e., the programmer need not
+-take care for the translations and the list of messages which have to be
++take care of the translations and the list of messages which have to be
+ translated.  S/He will simply wrap the translatable string in calls to
+ @code{gettext} et.al and the rest will be done by @code{xgettext}.  This
+-program has a lot of option which help to customize the output or do
++program has a lot of options which help to customize the output or
+ help to understand the input better.
+ 
+-Other programs help to manage development cycle when new messages appear
+-in the source files or when a new translation of the messages appear.
++Other programs help to manage the development cycle when new messages appear
++in the source files or when a new translation of the messages appears.
+ Here it should only be noted that using all the tools in GNU gettext it
+ is possible to @emph{completely} automate the handling of message
+-catalog.  Beside marking the translatable string in the source code and
++catalogs.  Beside marking the translatable strings in the source code and
+ generating the translations the developers do not have anything to do
+ themselves.
+diff -Nurd libc.org/manual/platform.texi libc/manual/platform.texi
+--- libc.org/manual/platform.texi	2012-06-12 16:47:12.000000000 +0200
++++ libc/manual/platform.texi	2012-10-10 17:35:46.000000000 +0200
+@@ -26,3 +26,11 @@
+ without requiring assistance from the operating system, so it is very
+ efficient.
+ @end deftypefun
++
++@deftypefun {uint64_t} __ppc_get_timebase_freq (void)
++Read the current frequency at which the Time Base Register is updated.
++
++This frequency is not related to the processor clock or the bus clock.
++It is also possible that this frequency is not constant.  More information is
++available in @cite{Power ISA 2.06b - Book II - Section 5.2}.
++@end deftypefun
+diff -Nurd libc.org/manual/setjmp.texi libc/manual/setjmp.texi
+--- libc.org/manual/setjmp.texi	2012-04-21 19:19:39.000000000 +0200
++++ libc/manual/setjmp.texi	2012-07-31 17:30:38.000000000 +0200
+@@ -354,7 +354,8 @@
+ resumed in the context which was referenced by the @code{uc_link}
+ element of the context structure passed to @code{makecontext} at the
+ time of the call.  If @code{uc_link} was a null pointer the application
+-terminates in this case.
++terminates normally with an exit status value of @code{EXIT_SUCCESS}
++(@pxref{Program Termination}).
+ 
+ Since the context contains information about the stack no two threads
+ should use the same context at the same time.  The result in most cases
+diff -Nurd libc.org/manual/socket.texi libc/manual/socket.texi
+--- libc.org/manual/socket.texi	2012-03-03 19:18:04.000000000 +0100
++++ libc/manual/socket.texi	2012-09-25 16:42:18.000000000 +0200
+@@ -809,7 +809,7 @@
+ colons, as in @samp{5f03:1200:836f:c100::1}.
+ 
+ Each computer also has one or more @dfn{host names}, which are strings
+-of words separated by periods, as in @samp{mescaline.gnu.org}.
++of words separated by periods, as in @samp{www.gnu.org}.
+ 
+ Programs that let the user specify a host typically accept both numeric
+ addresses and host names.  To open a connection a program needs a
+diff -Nurd libc.org/manual/startup.texi libc/manual/startup.texi
+--- libc.org/manual/startup.texi	2012-05-26 19:46:57.000000000 +0200
++++ libc/manual/startup.texi	2012-07-31 17:30:38.000000000 +0200
+@@ -310,11 +310,15 @@
+ 
+ The value of an environment variable can be accessed with the
+ @code{getenv} function.  This is declared in the header file
+-@file{stdlib.h}.  Modifications of enviroment variables are not
+-allowed in Multi-threaded programs.  The @code{getenv} function
+-can be safely used in multi-threaded programs
++@file{stdlib.h}.
+ @pindex stdlib.h
+ 
++Libraries should use @code{secure_getenv} instead of @code{getenv}, so
++that they do not accidentally use untrusted environment variables.
++Modifications of environment variables are not allowed in
++multi-threaded programs.  The @code{getenv} and @code{secure_getenv}
++functions can be safely used in multi-threaded programs.
++
+ @comment stdlib.h
+ @comment ISO
+ @deftypefun {char *} getenv (const char *@var{name})
+@@ -326,6 +330,18 @@
+ pointer.
+ @end deftypefun
+ 
++@comment stdlib.h
++@comment GNU
++@deftypefun {char *} secure_getenv (const char *@var{name})
++This function is similar to @code{getenv}, but it returns a null
++pointer if the environment is untrusted.  This happens when the
++program file has SUID or SGID bits set.  General-purpose libraries
++should always prefer this function over @code{getenv} to avoid
++vulnerabilities if the library is referenced from a SUID/SGID program.
++
++This function is a GNU extension.
++@end deftypefun
++
+ 
+ @comment stdlib.h
+ @comment SVID
+diff -Nurd libc.org/manual/stdio.texi libc/manual/stdio.texi
+--- libc.org/manual/stdio.texi	2012-04-21 19:19:39.000000000 +0200
++++ libc/manual/stdio.texi	2012-12-25 11:39:27.000000000 +0100
+@@ -2341,6 +2341,8 @@
+ the @var{size} argument specifies the maximum number of characters to
+ produce.  The trailing null character is counted towards this limit, so
+ you should allocate at least @var{size} characters for the string @var{s}.
++If @var{size} is zero, nothing, not even the null byte, shall be written and
++@var{s} may be a null pointer.
+ 
+ The return value is the number of characters which would be generated
+ for the given input, excluding the trailing null.  If this value is
+@@ -3135,7 +3137,7 @@
+ etc.  The full table is:
+ 
+ @ifinfo
+-@multitable @hsep @vsep {' '} {2^10 (1024)} {zetta} {Upper} {10^24 (1000)}
++@multitable {' '} {2^10 (1024)} {zetta} {Upper} {10^24 (1000)}
+ @item low @tab Multiplier  @tab From  @tab Upper @tab Multiplier
+ @item ' ' @tab 1           @tab       @tab ' '   @tab 1
+ @item k   @tab 2^10 (1024) @tab kilo  @tab K     @tab 10^3 (1000)
+diff -Nurd libc.org/manual/string.texi libc/manual/string.texi
+--- libc.org/manual/string.texi	2012-05-26 19:46:57.000000000 +0200
++++ libc/manual/string.texi	2012-07-31 17:30:38.000000000 +0200
+@@ -824,7 +824,6 @@
+ end of the destination string so that the actual copying can start.
+ This is a common example:
+ 
+-@cindex __va_copy
+ @cindex va_copy
+ @smallexample
+ /* @r{This function concatenates arbitrarily many strings.  The last}
+@@ -838,9 +837,7 @@
+   char *result;
+ 
+   va_start (ap, str);
+-  /* @r{Actually @code{va_copy}, but this is the name more gcc versions}
+-     @r{understand.}  */
+-  __va_copy (ap2, ap);
++  va_copy (ap2, ap);
+ 
+   /* @r{Determine how much space we need.}  */
+   for (s = str; s != NULL; s = va_arg (ap, const char *))
+diff -Nurd libc.org/manual/syslog.texi libc/manual/syslog.texi
+--- libc.org/manual/syslog.texi	2012-04-21 19:19:39.000000000 +0200
++++ libc/manual/syslog.texi	2012-08-28 16:14:43.000000000 +0200
+@@ -379,7 +379,7 @@
+ connection options in @var{options} is as if those bits were off.
+ @code{syslog} leaves the Syslog connection open.
+ 
+-If the @file{dev/log} socket is not open and connected, @code{syslog}
++If the @file{/dev/log} socket is not open and connected, @code{syslog}
+ opens and connects it, the same as @code{openlog} with the
+ @code{LOG_NDELAY} option would.
+ 
+@@ -422,7 +422,7 @@
+ @deftypefun void closelog (void)
+ 
+ @code{closelog} closes the current Syslog connection, if there is one.
+-This includes closing the @file{dev/log} socket, if it is open.
++This includes closing the @file{/dev/log} socket, if it is open.
+ @code{closelog} also sets the identification string for Syslog messages
+ back to the default, if @code{openlog} was called with a non-NULL argument
+ to @var{ident}.  The default identification string is the program name
