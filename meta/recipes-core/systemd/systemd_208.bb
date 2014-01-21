@@ -116,6 +116,12 @@ do_install() {
 		install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/systemd-udevd
 		sed -i s%@UDEVD@%${rootlibexecdir}/systemd/systemd-udevd% ${D}${sysconfdir}/init.d/systemd-udevd
 	fi
+
+	# fix up libdir confusion
+	if [ -d ${D}${libdir}/systemd ] ; then
+		cp -a ${D}${libdir}/systemd/* ${D}${systemd_unitdir}
+		rm -rf ${D}${libdir}/systemd
+	fi
 }
 
 do_install_ptest () {
