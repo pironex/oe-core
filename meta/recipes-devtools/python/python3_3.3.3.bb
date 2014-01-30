@@ -75,17 +75,6 @@ do_compile() {
         sed -e 's,${STAGING_DIR_HOST},,g' -i *.py
         cd -
 
-	#
-	# Copy config.h and an appropriate Makefile for distutils.sysconfig,
-	# which laters uses the information out of these to compile extensions
-	#
-	# The following part (until python compilation) should probably moved to an
-	# -initial recipe to handle staging better
-	#
-	install -d ${STAGING_INCDIR}/python${PYTHON_BINABI}/
-	install -d ${STAGING_LIBDIR}/python${PYTHON_MAJMIN}/config/
-	install -m 0644 pyconfig.h ${STAGING_INCDIR}/python${PYTHON_BINABI}/
-
 	# remove hardcoded ccache, see http://bugs.openembedded.net/show_bug.cgi?id=4144
 	sed -i -e s,ccache,'$(CCACHE)', Makefile
 
@@ -103,7 +92,6 @@ do_compile() {
 		-e 's,^INCLUDEDIR=.*,INCLUDE=${STAGING_INCDIR},g' \
 		-e 's,^CONFINCLUDEDIR=.*,CONFINCLUDE=${STAGING_INCDIR},g' \
 		Makefile
-	install -m 0644 Makefile ${STAGING_LIBDIR}/python${PYTHON_MAJMIN}/config/
 	# save copy of it now, because if we do it in do_install and 
 	# then call do_install twice we get Makefile.orig == Makefile.sysroot
 	install -m 0644 Makefile Makefile.sysroot
@@ -119,8 +107,6 @@ do_compile() {
 		LIB=${baselib} \
 		ARCH=${TARGET_ARCH} \
 		OPT="${CFLAGS}" libpython3.so
-
-	oe_libinstall -so libpython${PYTHON_BINABI} ${STAGING_LIBDIR}
 
 	oe_runmake HOSTPGEN=${STAGING_BINDIR_NATIVE}/python-native3/pgen \
 		HOSTPYTHON=${STAGING_BINDIR_NATIVE}/python-native3/python3 \
@@ -163,12 +149,18 @@ do_install() {
 	oe_multilib_header python${PYTHON_MAJMIN}/pyconfig.h
 }
 
+do_install_append_class-nativesdk () {
+	create_wrapper ${D}${bindir}/python${PYTHON_MAJMIN} TERMINFO_DIRS='${sysconfdir}/terminfo:/etc/terminfo:/usr/share/terminfo:/usr/share/misc/terminfo:/lib/terminfo'
+}
+
 SSTATE_SCAN_FILES += "Makefile"
 PACKAGE_PREPROCESS_FUNCS += "py_package_preprocess"
 
 py_package_preprocess () {
 	# copy back the old Makefile to fix target package
 	install -m 0644 Makefile.orig ${PKGD}/${libdir}/python${PYTHON_MAJMIN}/config/Makefile
+	# Remove references to buildmachine paths in target Makefile
+	sed -i -e 's:--sysroot=${STAGING_DIR_TARGET}::g' -e s:'--with-libtool-sysroot=${STAGING_DIR_TARGET}'::g ${PKGD}/${libdir}/python${PYTHON_MAJMIN}/config/Makefile
 }
 
 require python-${PYTHON_MAJMIN}-manifest.inc
