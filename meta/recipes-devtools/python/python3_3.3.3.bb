@@ -32,6 +32,7 @@ SRC_URI += "\
             file://shutil-follow-symlink-fix.patch \
             file://sysroot-include-headers.patch \
             file://unixccompiler.patch \
+            file://avoid-ncursesw-include-path.patch \
            "
 SRC_URI[md5sum] = "f3ebe34d4d8695bf889279b54673e10c"
 SRC_URI[sha256sum] = "e526e9b612f623888364d30cc9f3dfc34dcef39065c713bdbcddf47df84d8dcb"
