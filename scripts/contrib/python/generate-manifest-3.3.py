@@ -9,15 +9,18 @@
 #  * Updated to no longer generate special -dbg package, instead use the
 #    single system -dbg
 #  * Update version with ".1" to indicate this change
-
+#
+# 2014 Khem Raj <raj.khem@gmail.com>
+# Added python3 support
+#
 import os
 import sys
 import time
 
-VERSION = "3.3.0"
+VERSION = "3.3.3"
 
 __author__ = "Michael 'Mickey' Lauer <mlauer@vanille-media.de>"
-__version__ = "20121010"
+__version__ = "20140131"
 
 class MakefileMaker:
 
@@ -173,6 +176,7 @@ if __name__ == "__main__":
     "lib-dynload/xreadlines.*.so types.* platform.* ${bindir}/python* "  + 
     "_weakrefset.* sysconfig.* config/Makefile " +
     "${includedir}/python${PYTHON_MAJMIN}/pyconfig*.h " +
+    "${libdir}/python${PYTHON_MAJMIN}/collections " +
     "${libdir}/python${PYTHON_MAJMIN}/sitecustomize.py ")
 
     m.addPackage( "${PN}-dev", "Python Development Package", "${PN}-core",
