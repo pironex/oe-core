@@ -11,6 +11,9 @@ SRC_URI = "http://dri.freedesktop.org/libdrm/libdrm-${PV}.tar.bz2"
 PROVIDES = "drm"
 DEPENDS = "libpthread-stubs udev"
 
+# | {standard input}:1346: Error: thumb conditional instruction should be in IT block -- `strexeq r2,r1,[r6]'
+ARM_INSTRUCTION_SET = "arm"
+
 # be aware that libdrm_2.4.44.bb ignores this
 INC_PR = "r4"
 
