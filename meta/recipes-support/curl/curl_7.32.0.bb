@@ -30,6 +30,7 @@ EXTRA_OECONF = "--with-zlib=${STAGING_LIBDIR}/../ \
                 --enable-crypto-auth \
                 --disable-ldap \
                 --disable-ldaps \
+                --with-ca-bundle=${sysconfdir}/ssl/certs/ca-certificates.crt \
                 ${CURLGNUTLS} \
                 "
 
