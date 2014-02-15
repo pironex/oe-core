@@ -1,0 +1,31 @@
+From 28e2a1844e9460b08872457a01e341de1e5ef0ff Mon Sep 17 00:00:00 2001
+From: Koen Kooi <koen@dominion.thruhere.net>
+Date: Sat, 15 Feb 2014 12:51:08 +0100
+Subject: [PATCH] pkg_hash: prevent debug spew for ignored packages
+
+Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+---
+ libopkg/pkg_hash.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libopkg/pkg_hash.c b/libopkg/pkg_hash.c
+index 4bc0c3a..6bb849e 100644
+--- a/libopkg/pkg_hash.c
++++ b/libopkg/pkg_hash.c
+@@ -138,11 +138,13 @@ pkg_hash_add_from_file(const char *file_name,
+ 		}
+ 
+ 		if (!pkg->architecture || !pkg->arch_priority) {
++			/*
+ 			char *version_str = pkg_version_str_alloc(pkg);
+ 			opkg_msg(NOTICE, "Package %s version %s has no "
+ 					"valid architecture, ignoring.\n",
+ 					pkg->name, version_str);
+ 			free(version_str);
++			*/
+ 			continue;
+ 		}
+ 
+-- 
+1.8.3.4
+

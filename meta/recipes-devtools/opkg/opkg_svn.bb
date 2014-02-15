@@ -4,6 +4,7 @@ SRC_URI = "svn://opkg.googlecode.com/svn;module=trunk;protocol=http \
            file://no-install-recommends.patch \
            file://add-exclude.patch \
            file://opkg-configure.service \
+           file://0001-pkg_hash-prevent-debug-spew-for-ignored-packages.patch \
 "
 
 S = "${WORKDIR}/trunk"
