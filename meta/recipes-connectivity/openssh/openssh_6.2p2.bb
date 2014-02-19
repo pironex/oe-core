@@ -87,6 +87,8 @@ do_install_append () {
 		if [ ${i} = "pam" ];  then
 			install -d ${D}${sysconfdir}/pam.d
 			install -m 0755 ${WORKDIR}/sshd ${D}${sysconfdir}/pam.d/sshd
+			sed -i -e 's:#UsePAM no:UsePAM yes:' ${WORKDIR}/sshd_config
+			sed -i -e 's:#UsePAM no:UsePAM yes:' ${D}${sysconfdir}/ssh/sshd_config
 		fi
 	done
 	install -d ${D}${sysconfdir}/init.d
