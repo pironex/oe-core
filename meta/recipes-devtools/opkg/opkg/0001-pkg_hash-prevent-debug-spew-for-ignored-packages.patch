@@ -1,31 +1,46 @@
-From 28e2a1844e9460b08872457a01e341de1e5ef0ff Mon Sep 17 00:00:00 2001
-From: Koen Kooi <koen@dominion.thruhere.net>
-Date: Sat, 15 Feb 2014 12:51:08 +0100
-Subject: [PATCH] pkg_hash: prevent debug spew for ignored packages
+From 498df947005aea5a3a453eb71b0df27a3dccaf97 Mon Sep 17 00:00:00 2001
+From: Paul Barker <paul@paulbarker.me.uk>
+Date: Wed, 12 Mar 2014 13:25:58 +0000
+Subject: [PATCH] pkg_hash: Fix invalid architecture notices
 
-Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+If pkg->architecture is NULL, the message "no valid architecture" is correct.
+However if pkg->architecture is not NULL but pkg->arch_priority is zero, then
+the architecture is valid but is not compatible with the current system.
+
+Signed-off-by: Paul Barker <paul@paulbarker.me.uk>
 ---
- libopkg/pkg_hash.c | 2 ++
- 1 file changed, 2 insertions(+)
+ libopkg/pkg_hash.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/libopkg/pkg_hash.c b/libopkg/pkg_hash.c
-index 4bc0c3a..6bb849e 100644
+index 925fdc9..487599b 100644
 --- a/libopkg/pkg_hash.c
 +++ b/libopkg/pkg_hash.c
-@@ -138,11 +138,13 @@ pkg_hash_add_from_file(const char *file_name,
- 		}
- 
- 		if (!pkg->architecture || !pkg->arch_priority) {
-+			/*
- 			char *version_str = pkg_version_str_alloc(pkg);
- 			opkg_msg(NOTICE, "Package %s version %s has no "
- 					"valid architecture, ignoring.\n",
- 					pkg->name, version_str);
- 			free(version_str);
-+			*/
+@@ -138,7 +138,7 @@ pkg_hash_add_from_file(const char *file_name,
  			continue;
  		}
  
+-		if (!pkg->architecture || !pkg->arch_priority) {
++		if (!pkg->architecture) {
+ 			char *version_str = pkg_version_str_alloc(pkg);
+ 			opkg_msg(NOTICE, "Package %s version %s has no "
+ 					"valid architecture, ignoring.\n",
+@@ -146,6 +146,14 @@ pkg_hash_add_from_file(const char *file_name,
+ 			free(version_str);
+ 			continue;
+ 		}
++		if (!pkg->arch_priority) {
++			char *version_str = pkg_version_str_alloc(pkg);
++			opkg_msg(DEBUG, "Package %s version %s is built for architecture %s "
++					"which cannot be installed here, ignoring.\n",
++					pkg->name, version_str, pkg->architecture);
++			free(version_str);
++			continue;
++		}
+ 
+ 		hash_insert_pkg(pkg, is_status_file);
+ 
 -- 
-1.8.3.4
+1.9.0
+
 
