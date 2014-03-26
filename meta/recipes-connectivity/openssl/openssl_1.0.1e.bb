@@ -46,6 +46,7 @@ SRC_URI += "file://configure-targets.patch \
             file://0011-bsaes-armv7.pl-remove-partial-register-operations-in.patch \
             file://0015-aes-asm-bsaes-.pl-improve-decrypt-performance.patch \
             file://find.pl \
+            file://0001-Fix-for-TLS-record-tampering-bug-CVE-2013-4353.patch \
            "
 
 SRC_URI[md5sum] = "66bf6f10f060d561929de96f9dfe5b8c"
