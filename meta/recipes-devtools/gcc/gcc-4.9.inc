@@ -63,6 +63,10 @@ SRC_URI = "${GNU_MIRROR}/gcc/gcc-${PV}/gcc-${PV}.tar.bz2 \
 	   file://0046-libatomic-deptracking.patch \
 	   file://0047-repomembug.patch \
 	   file://0049-Enable-SPE-AltiVec-generation-on-powepc-linux-target.patch \
+	   file://0050-libstdc-musl.patch \
+	   file://0051-gcc-musl-support.patch \
+	   file://0052-musl-dynamic-linker.patch \
+	   file://0053-musl-no-fixincludes.patch \
 	  "
 SRC_URI[md5sum] = "9709b49ae0e904cbb0a6a1b62853b556"
 SRC_URI[sha256sum] = "b9b047a97bade9c1c89970bc8e211ff57b7b8998a1730a80a653d329f8ed1257"
