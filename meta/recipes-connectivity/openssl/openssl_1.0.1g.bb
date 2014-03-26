@@ -32,6 +32,7 @@ SRC_URI += "file://configure-targets.patch \
             file://openssl-avoid-NULL-pointer-dereference-in-EVP_DigestInit_ex.patch \
             file://openssl-avoid-NULL-pointer-dereference-in-dh_pub_encode.patch \
             file://initial-aarch64-bits.patch \
+            file://linux-musl-libc-termios.patch \
             file://find.pl \
             file://openssl-fix-des.pod-error.patch \
             file://Makefiles-ptest.patch \
