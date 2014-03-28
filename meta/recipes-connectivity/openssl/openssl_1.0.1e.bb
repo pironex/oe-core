@@ -46,6 +46,7 @@ SRC_URI += "file://configure-targets.patch \
             file://0011-bsaes-armv7.pl-remove-partial-register-operations-in.patch \
             file://0015-aes-asm-bsaes-.pl-improve-decrypt-performance.patch \
             file://find.pl \
+            file://openssl-fix-des.pod-error.patch \
             file://0001-Fix-for-TLS-record-tampering-bug-CVE-2013-4353.patch \
             file://0001-Fix-DTLS-retransmission-from-previous-session.patch \
             file://0001-Use-version-in-SSL_METHOD-not-SSL-structure.patch \
