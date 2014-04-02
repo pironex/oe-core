@@ -6,7 +6,6 @@ PR = "r1"
 # some upstream changes.  Only do this for native packages.
 OLDHOST = ""
 OLDHOST_class-native = "file://util-linux-native.patch \
-                        file://util-linux-native-qsort.patch \
 			"
 
 SRC_URI += "file://util-linux-ng-replace-siginterrupt.patch \
@@ -15,6 +14,7 @@ SRC_URI += "file://util-linux-ng-replace-siginterrupt.patch \
             file://configure-sbindir.patch \
             file://fix-configure.patch \
             file://fix-parallel-build.patch \
+            file://posix-only.patch \
             ${OLDHOST} \
 "
 
