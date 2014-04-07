@@ -4,7 +4,7 @@ require openssl.inc
 # if they are available.
 DEPENDS += "ocf-linux"
 
-CFLAG += "-DHAVE_CRYPTODEV -DUSE_CRYPTODEV_DIGESTS"
+CFLAG += "-DHAVE_CRYPTODEV -DUSE_CRYPTODEV_DIGESTS -DOPENSSL_NO_HEARTBEATS"
 
 PR = "${INC_PR}.0"
 
