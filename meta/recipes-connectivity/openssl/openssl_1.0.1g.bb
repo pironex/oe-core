@@ -42,7 +42,6 @@ SRC_URI += "file://configure-targets.patch \
             file://0009-Added-support-for-ARM-NEON-based-bit-sliced-AES-in-X.patch \
             file://0010-bsaes-armv7.pl-remove-byte-order-dependency-and-mino.patch \
             file://0011-bsaes-armv7.pl-remove-partial-register-operations-in.patch \
-            file://0015-aes-asm-bsaes-.pl-improve-decrypt-performance.patch \
             file://find.pl \
             file://openssl-fix-des.pod-error.patch \
            "
