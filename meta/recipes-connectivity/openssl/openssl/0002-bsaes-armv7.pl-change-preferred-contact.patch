@@ -1,0 +1,27 @@
+From 5cac503187d5156e601ba6b7e325f0e3d9b00120 Mon Sep 17 00:00:00 2001
+From: Andy Polyakov <appro@openssl.org>
+Date: Sat, 3 Mar 2012 13:04:53 +0000
+Subject: [PATCH 02/15] bsaes-armv7.pl: change preferred contact.
+
+Upstream-Status: Backport
+
+---
+ crypto/aes/asm/bsaes-armv7.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/crypto/aes/asm/bsaes-armv7.pl b/crypto/aes/asm/bsaes-armv7.pl
+index a93c8ed..d9748f4 100644
+--- a/crypto/aes/asm/bsaes-armv7.pl
++++ b/crypto/aes/asm/bsaes-armv7.pl
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ 
+ # ====================================================================
+-# Written by Andy Polyakov <appro@fy.chalmers.se> for the OpenSSL
++# Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
+ # project. The module is, however, dual licensed under OpenSSL and
+ # CRYPTOGAMS licenses depending on where you obtain it. For further
+ # details see http://www.openssl.org/~appro/cryptogams/.
+-- 
+1.8.3.1
+
