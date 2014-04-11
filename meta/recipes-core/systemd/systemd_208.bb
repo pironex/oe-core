@@ -124,6 +124,13 @@ do_install() {
 		cp -a ${D}${libdir}/systemd/* ${D}${systemd_unitdir}
 		rm -rf ${D}${libdir}/systemd
 	fi
+
+	mkdir -p ${D}{sysconfdir}/default
+	echo 'LANG="en_US.UTF-8"' > ${D}{sysconfdir}/default/locale
+
+	if [ -d ${D}{sysconfdir}/pam.d ] ; then
+		sed -i -e s:system-auth:common-auth:g ${D}{sysconfdir}/pam.d/*
+	fi
 }
 
 do_install_ptest () {
@@ -202,6 +209,7 @@ FILES_${PN} = " ${base_bindir}/* \
                 ${datadir}/${BPN} \
                 ${sysconfdir}/bash_completion.d/ \
                 ${sysconfdir}/dbus-1/ \
+                ${sysconfdir}/default/ \
                 ${sysconfdir}/machine-id \
                 ${sysconfdir}/modules-load.d/ \
                 ${sysconfdir}/sysctl.d/ \
