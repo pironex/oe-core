@@ -9,7 +9,7 @@ PR = "r6"
 
 inherit autotools
 
-SRCREV = "c01c5af807cb4b0157b882ab07a893df9a810111"
+SRCREV = "03dadf55109bd43d3380f040debe9f82f66f2f35"
 SRC_URI = "git://github.com/tias/xinput_calibrator.git \
            file://30xinput_calibrate.sh \
            file://Allow-xinput_calibrator_pointercal.sh-to-be-run-as-n.patch"
