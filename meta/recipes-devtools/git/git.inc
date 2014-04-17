@@ -84,7 +84,7 @@ FILES_${PN}-perltools += " \
     ${prefix}/lib/perl \
     ${datadir}/perl \
 "
-RDEPENDS_${PN}-perltools = "${PN} perl perl-module-file-path findutils"
+RDEPENDS_${PN}-perltools = "${PN} perl perl-module-file-path liberror-perl findutils"
 
 PACKAGES =+ "${PN}-python"
 FILES_${PN}-python = "${libdir}/python*"
