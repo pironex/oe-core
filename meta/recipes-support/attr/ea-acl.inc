@@ -36,6 +36,7 @@ BBCLASSEXTEND = "native"
 # Only append ldflags for target recipe and if USE_NLS is enabled
 LDFLAGS_append_libc-uclibc = "${@['', ' -lintl '][(d.getVar('PN', True) == d.getVar('BPN', True)) and (d.getVar('USE_NLS', True) == 'yes')]}"
 EXTRA_OECONF_append_libc-uclibc = "${@['', ' --disable-gettext '][(d.getVar('PN', True) == d.getVar('BPN', True)) and (d.getVar('USE_NLS', True) == 'no')]}"
+EXTRA_OECONF_append_libc-musl = "${@['', ' --disable-gettext '][(d.getVar('PN', True) == d.getVar('BPN', True)) and (d.getVar('USE_NLS', True) == 'no')]}"
 
 fix_symlink () {
 	if test "${libdir}" = "${base_libdir}" ; then
