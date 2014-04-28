@@ -93,7 +93,8 @@ FILES_gettext-runtime-doc = "${mandir}/man1/gettext.* \
                             "
 
 do_install_append() {
-    rm -f ${D}${libdir}/preloadable_libintl.so
+	rm -f ${D}${libdir}/preloadable_libintl.so
+	rm -f ${D}${libdir}/charset.alias
 }
 
 do_install_append_class-native () {
