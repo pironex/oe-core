@@ -46,6 +46,7 @@ EXTRA_OECONF = "${@['--enable-clocale=generic', ''][d.getVar('USE_NLS', True) !=
                 ${EXTRA_OECONF_FPU} \
                 ${EXTRA_OECONF_PATHS} \
                 ${@get_gcc_mips_plt_setting(bb, d)} \
+                ${@get_long_double_setting(bb, d)} \
                 ${@get_gcc_multiarch_setting(bb, d)}"
 
 export ac_cv_path_SED = 'sed'
@@ -63,10 +64,6 @@ EXTRA_OECONF_append_mips64el    = " --with-abi=64 --with-arch-64=mips64 --with-t
 
 EXTRA_OECONF_FPU = "${@get_gcc_fpu_setting(bb, d)}"
 CPPFLAGS = ""
-
-# powerpc needs this to comply with the ABI
-EXTRA_OECONF_append_powerpc = " --with-long-double-128"
-EXTRA_OECONF_append_powerpc64 = " --with-long-double-128"
 
 SYSTEMHEADERS = "${target_includedir}"
 SYSTEMLIBS = "${target_base_libdir}/"
