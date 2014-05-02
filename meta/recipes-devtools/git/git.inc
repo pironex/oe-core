@@ -1,4 +1,4 @@
-DESCRIPTION = "The git revision control system used by the Linux kernel developers"
+SUMMARY = "Distributed version control system"
 SECTION = "console/utils"
 LICENSE = "GPLv2"
 DEPENDS = "openssl curl zlib expat"
@@ -28,15 +28,13 @@ do_install () {
 		template_dir=${datadir}/git-core/templates \
 		GIT_PYTHON_DIR=${D}${datadir}/git-core/python
 
-	sed -i -e 's#${STAGING_BINDIR_NATIVE}/perl-native/#${bindir}/#' \
-	       -e 's#${STAGING_LIBDIR_NATIVE}/#${libdir}/#' \
-	       -e 's#/lib/perl-native#/lib#g' \
-	       ${S}/perl/perl.mak
-
-	cd ${S}/perl && oe_runmake install DESTDIR="${D}" bindir=${bindir}
+	cd ${B}/perl && oe_runmake install DESTDIR="${D}" bindir=${bindir}
 
 	# ${libdir} is not applicable here, perl-native files are always
 	# installed to /usr/lib on both 32/64 bits targets.
+	# Fix up build paths and point to target locations.
+	mv ${D}${exec_prefix}/lib/perl-native/perl ${D}${exec_prefix}/lib/perl
+	sed -i -e s:${D}::g ${D}${exec_prefix}/lib/perl/*/auto/Git/.packlist
 	rm -rf ${D}${exec_prefix}/lib/perl-native
 }
 
