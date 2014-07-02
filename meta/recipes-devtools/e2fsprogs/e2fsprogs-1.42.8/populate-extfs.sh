@@ -23,11 +23,12 @@ DEBUGFS="debugfs"
 	find $SRCDIR | while read FILE; do
                 TGT="${FILE##*/}"
                 DIR="${FILE#$SRCDIR}"
-                DIR="${DIR%$TGT}"
 
 		# Skip the root dir
 		[ ! -z "$DIR" ] || continue
 		[ ! -z "$TGT" ] || continue
+
+                DIR="$(dirname "$DIR")"
 
 		if [ "$DIR" != "$CWD" ]; then
 			echo "cd $DIR"
@@ -35,7 +36,7 @@ DEBUGFS="debugfs"
 		fi
 
 		# Only stat once since stat is a time consuming command
-		STAT=$(stat -c "TYPE=\"%F\";DEVNO=\"0x%t 0x%T\";MODE=\"%f\";U=\"%u\";G=\"%g\"" "$FILE")
+		STAT=$(stat -c "TYPE=\"%F\";DEVNO=\"0x%t 0x%T\";MODE=\"%f\";U=\"%u\";G=\"%g\";AT=\"%x\";MT=\"%y\";CT=\"%z\"" "$FILE")
 		eval $STAT
 
 		case $TYPE in
@@ -69,6 +70,14 @@ DEBUGFS="debugfs"
 		# Set uid and gid
 		echo "sif \"$TGT\" uid $U"
 		echo "sif \"$TGT\" gid $G"
+
+		# Set atime, mtime and ctime
+		AT=`echo $AT | cut -d'.' -f1 | sed -e 's#[- :]##g'`
+		MT=`echo $MT | cut -d'.' -f1 | sed -e 's#[- :]##g'`
+		CT=`echo $CT | cut -d'.' -f1 | sed -e 's#[- :]##g'`
+		echo "sif \"$TGT\" atime $AT"
+		echo "sif \"$TGT\" mtime $MT"
+		echo "sif \"$TGT\" ctime $CT"
 	done
 
 	# Handle the hard links.
@@ -93,4 +102,9 @@ DEBUGFS="debugfs"
 		echo "sif $SRC links_count $LN_CNT"
 	done
 	rm -fr $INODE_DIR
-} | $DEBUGFS -w -f - $DEVICE
+} | $DEBUGFS -w -f - $DEVICE 2>&1 1>/dev/null | grep '.*: .*'
+
+if [ $? = 0 ]; then
+    echo "Some error occured while executing [$DEBUGFS -w -f - $DEVICE]"
+    exit 1
+fi
