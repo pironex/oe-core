@@ -48,6 +48,10 @@ SRC_URI += "file://configure-targets.patch \
             file://Makefiles-ptest.patch \
             file://run-ptest \
             file://openssl-CVE-2010-5298.patch \
+	    file://openssl-fix-CVE-2014-3566.patch \
+	    file://openssl-fix-CVE-2014-3513.patch \
+	    file://openssl-fix-CVE-2014-3567.patch \
+	    file://openssl-fix-CVE-2014-3568.patch \
            "
 
 SRC_URI[md5sum] = "de62b43dfcd858e66a74bee1c834e959"
