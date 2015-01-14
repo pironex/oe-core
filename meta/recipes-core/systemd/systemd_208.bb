@@ -125,11 +125,11 @@ do_install() {
 		rm -rf ${D}${libdir}/systemd
 	fi
 
-	mkdir -p ${D}{sysconfdir}/default
-	echo 'LANG="en_US.UTF-8"' > ${D}{sysconfdir}/default/locale
+	mkdir -p ${D}${sysconfdir}/default
+	echo 'LANG="en_US.UTF-8"' > ${D}${sysconfdir}/default/locale
 
-	if [ -d ${D}{sysconfdir}/pam.d ] ; then
-		sed -i -e s:system-auth:common-auth:g ${D}{sysconfdir}/pam.d/*
+	if [ -d ${D}${sysconfdir}/pam.d ] ; then
+		sed -i -e s:system-auth:common-auth:g ${D}${sysconfdir}/pam.d/*
 	fi
 }
 
