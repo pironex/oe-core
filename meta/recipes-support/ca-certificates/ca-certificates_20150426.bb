@@ -15,7 +15,6 @@ DEPENDS_class-native = ""
 SRCREV = "d4790d2832aaac9152f450e06661511067592227"
 
 SRC_URI = "git://anonscm.debian.org/collab-maint/ca-certificates.git \
-           file://0001-update-ca-certificates-remove-c-rehash.patch \
            file://0002-update-ca-certificates-use-SYSROOT.patch \
            file://0001-update-ca-certificates-don-t-use-Debianisms-in-run-p.patch \
            file://default-sysroot.patch \
