@@ -12,6 +12,7 @@ export DIRS = "crypto ssl apps engines"
 export OE_LDFLAGS="${LDFLAGS}"
 
 SRC_URI += "file://configure-targets.patch \
+            file://openssl-c_rehash.sh \
             file://shared-libs.patch \
             file://oe-ldflags.patch \
             file://engines-install-in-libdir-ssl.patch \
