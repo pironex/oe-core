@@ -20,7 +20,7 @@ RDEPENDS_${PN}_class-native = "autoconf-native perl-native-runtime"
 
 SRC_URI += " file://python-libdir.patch \
             file://py-compile-compile-only-optimized-byte-code.patch \
-            file://buildtest.patch"
+            file://buildtest.patch \
             file://0001-automake-port-to-Perl-5.22-and-later.patch \
             "
 
